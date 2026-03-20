@@ -2,7 +2,6 @@
 # of fetching a set of TLE's from a webpage for use in other parts of the program
 #
 # written by Ryan Deaton (rad53@calvin.edu) for Calvin Hackathon '26 on March 2026
-#
 
 import requests
 
@@ -25,5 +24,5 @@ if __name__ == "__main__":
         print(name)
         print(data["line1"])
         print(data["line2"])
-        print()  # blank line between each satellite
+        print()
 
