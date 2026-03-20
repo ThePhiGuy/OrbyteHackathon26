@@ -26,3 +26,4 @@ if __name__ == "__main__":
         print(data["line1"])
         print(data["line2"])
         print()  # blank line between each satellite
+
