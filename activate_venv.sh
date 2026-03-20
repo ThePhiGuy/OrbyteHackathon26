@@ -12,6 +12,6 @@ fi
 
 # Activate
 echo "Activating virtual environment..."
-source venv/bin/activate
+source ./venv/bin/activate
 
 echo "Done! You are now in the venv."
