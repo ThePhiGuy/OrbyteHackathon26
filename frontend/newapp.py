@@ -2,7 +2,7 @@ from nicegui import ui
 import random
 
 # list of all satellites
-satellite_list = {"ISS" : (1)}
+satellite_list = {"ISS" : ()}
 
 
 @ui.page('/')
