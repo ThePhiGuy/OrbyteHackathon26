@@ -50,7 +50,7 @@ def main_page():
         # Update the UI text
         coord_label.set_text(f'Lat: {new_lat:.2f}, Lon: {new_lon:.2f}')
 
-    ui.timer(5.0, update_satellite)
+    ui.timer(30.0, update_satellite)
 
 if __name__ in {"__main__", "__mp_main__"}:
     # As long as PyQt6 is installed, this will open in a native app window!
