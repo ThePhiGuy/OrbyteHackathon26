@@ -48,7 +48,8 @@ class passPredictor:
         # Update the selected list
         self.selected_satelites = new_selected
         
-
+    def get_path(self, satelite):
+        return self.satelites[satelite].get_path()
             
 
 class sateliteData:
