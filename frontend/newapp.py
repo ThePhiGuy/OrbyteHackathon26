@@ -101,7 +101,7 @@ def main_page():
             API.update_tles()
             for sat in selected_satellites:
                 path = API.get_path(sat)
-                ds.drawSatellite(my_map, path[0][0], path[0][1], grv.getVisRad(path[0][2]), path, 'red')
+                ds.drawSatellite(my_map, path[0][0], path[0][1], grv.getVisRad(path[0][2]), path, 'rgb(250, 0, 0)')
             force_update = False
             
         if (cycle_counter % 60 == 0):
@@ -111,7 +111,7 @@ def main_page():
             API.update_selected(list(selected_satellites))
             for sat in selected_satellites:
                 path = API.get_path(sat)
-                ds.drawSatellite(my_map, path[0][0], path[0][1], grv.getVisRad(path[0][2]), path, 'red')
+                ds.drawSatellite(my_map, path[0][0], path[0][1], grv.getVisRad(path[0][2]), path, 'rgb(250, 0, 0)')
             cycle_counter = 0
                 
 
