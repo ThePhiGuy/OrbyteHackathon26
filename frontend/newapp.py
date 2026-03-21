@@ -57,9 +57,14 @@ def main_page():
     def update_countdown_times():
         # This will run every second
         for sat_name, label in satellite_labels.items():
-            time_left = 0
-            
-            label.set_text(time_left)
+            try:
+                loc = user_marker.props.get('latlng')
+                print(loc)
+                time_left = riseset.nextRiseTime(sat_name, loc)
+                
+                label.set_text(time_left)
+            except:
+                continue
 
     # Sidebar sort function
     def sort_satellites(e):
