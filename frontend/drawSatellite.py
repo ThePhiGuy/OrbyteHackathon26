@@ -57,7 +57,7 @@ def drawSatellite (my_map, lat, lon, radVisible, coords, color,
     custom_icon_js = f'''L.icon({{
     iconUrl: '{imageURL}',
     iconSize: [40, 40], // width and height of the icon
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+    iconAnchor: [20, 20], // point of the icon which will correspond to marker's location
     }})'''
     # apply custom marker js
     marker.run_method(':setIcon', custom_icon_js)
