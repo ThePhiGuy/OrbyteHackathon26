@@ -10,7 +10,7 @@ def drawVisCircle(my_map, lat, lon, radVis) :
     # Goal: Display the Area of where the given Satellite could be Seen Currently with a Circle
     # Parameters: Latitude, Longitude, Radian of Visible Area Currently
     visCirc = my_map.leaflet(center=(lat, lon)).classes('h-32')
-    visCirc.generic_layer(name='satellites', args=[m.center, {'color': 'yellow', 'radius': radVis}])
+    visCirc.generic_layer(name='satellites', args=[visCirc.center, {'color': 'yellow', 'radius': radVis}])
 
 def drawFlightPath(my_map, coords) :
     # Goal: To draw the pre-calculated future flightpath the satellite using a polyline
