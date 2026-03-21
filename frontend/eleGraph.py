@@ -26,18 +26,17 @@ def draw_graph_overhead() :
         ui.button('Update Graph', on_click=lambda: update_graph()).classes('ml-4')
 
 
-def update_graph (user_loc, time_alt) :
+def update_graph (user_loc) :
     # Goal: Update/Draw the graph of the visibility of a selected Satellite
-    # Parameters: 
-    #   user_loc, a tuple of the user Locations
-    #   time_alt - List of tuples (Time, Altitude)
+    # Parameter: user_loc, a tuple of the user Locations
+
     global selected_satellite
 
     if not selected_satellite:
         return
 
     # Grabs which Satellite
-    convertfromtle.getTupListAltDeg(selected_satellite, user_loc)
+    time_alt = convertfromtle.getTupListAltDeg(selected_satellite, user_loc)
 
     # Position of graph
     with ui.row().classes('w-full justify-center'):
