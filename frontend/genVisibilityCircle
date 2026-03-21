@@ -1,0 +1,12 @@
+# genIcon.py generates a circle around the satellite icon on the leaflet UI,
+# namely the satellite image on the map
+#
+# written by Ty Veldhouse (tpv8@calvin.edu) for Calvin Hackathon '26 on March 2026
+
+from nicegui import ui
+
+def visCircle(xcoord, ycoord, radVis) :
+    m = ui.leaflet(center=(51.505, -0.09)).classes('h-32')
+    m.generic_layer(name='satellites', args=[m.center, {'color': 'yellow', 'radius': radVis}])
+
+ui.run()
