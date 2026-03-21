@@ -9,7 +9,7 @@ import convertfromtle
 from collections import deque
 
 
-def getSatellites():
+def get_satellites():
     sats = []
     sources = ["https://www.amsat.org/tle/dailytle.txt"]
     tles = tlefetch.fetch_all_tles(sources)
@@ -60,3 +60,5 @@ class sateliteData:
             curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle.line1, self.tle.line2, i)
             self.positions.append(curr)
 
+if __name__ == "__main__":
+    print(getSatellites())
