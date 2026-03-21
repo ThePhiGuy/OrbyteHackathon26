@@ -4,67 +4,57 @@
 
 from sgp4.api import Satrec, jday
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from skyfield.api import EarthSatellite, load
 
 # line1, line2 are TLE components of a satellite
-# returns tuple of r (km from earth center) and v (velocity in km/s)
-# default arg dt to allow manual datetime input
-# def TLEtoECI(line1, line2, dt = datetime.utcnow()):
-#     sat = Satrec.twoline2rv(line1, line2)
+# returns lat, long (in deg), and alt (km) 
+# dt (datetime) for allow manual datetime input
 
-#     # Time you want position for
-#     jd, fr = jday(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
-
-#     # Propagate
-#     e, r, v = sat.sgp4(jd, fr)
-
-#     # if e != 0:
-#         #theres an error code on the sat, throw some exception or smthg
-
-#     return r, v
-
-def ECItoGeodetic(line1, line2):
+def TLEtoGeodetic(line1, line2, dt):
     ts = load.timescale()
-    t = ts.now()
+    #creates timescale
+    t = ts.from_datetime(dt)
+    #gets time from datetime
 
     satellite = EarthSatellite(line1, line2)
+    #create satellite obj from TLEs
 
     geocentric = satellite.at(t)
-    lat, lon = satellite.latlon_of(geocentric)
-    return lat, lon
-    # subpoint = geocentric.subpoint()
+    subpoint = geocentric.subpoint()
+    #turn into subpoint, get lat, lon, alt
 
-    # lat = subpoint.latitude.degrees
-    # lon = subpoint.longitude.degrees
-    # alt = subpoint.elevation.km
+    lat = subpoint.latitude.degrees
+    lon = subpoint.longitude.degrees
+    alt = subpoint.elevation.km
 
-    # print("Lat:", lat)
-    # print("Lon:", lon)
-    # print("Alt (km):", alt)
+    return float(lat), float(lon), float(alt) 
 
-    # return lat, lon, alt 
 
+def TLEtoGeodeticSecOffset(line1, line2, secOffset):
+    ts = load.timescale()
+    #creates timescale
+    t = ts.from_datetime(datetime.now(timezone.utc) + timedelta(seconds = secOffset))
+    #gets time from datetime
+
+    satellite = EarthSatellite(line1, line2)
+    #create satellite obj from TLEs
+
+    geocentric = satellite.at(t)
+    subpoint = geocentric.subpoint()
+    #turn into subpoint, get lat, lon, alt
+
+    lat = subpoint.latitude.degrees
+    lon = subpoint.longitude.degrees
+    alt = subpoint.elevation.km
+
+    return float(lat), float(lon), float(alt) 
 
 # Example TLE (ISS)
 line1 = "1 25544U 98067A   26079.87218434  .00009590  00000-0  18573-3 0  9991"
 line2 = "2 25544  51.6346  17.0785 0006366 213.2716 146.7873 15.48402839558062"
 
-print(ECItoGeodetic(line1, line2))
+print(TLEtoGeodetic(line1, line2, datetime.now(timezone.utc)))
+print(TLEtoGeodeticSecOffset(line1, line2, 5))
 
-# sat = Satrec.twoline2rv(line1, line2)
-
-# Time you want position for
-# dt = datetime.utcnow()
-# jd, fr = jday(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
-
-# # Propagate
-# e, r, v = sat.sgp4(jd, fr)
-
-# if e != 0:
-#     print("Error:", e)
-
-# r = position (km) in ECI/TEME frame
-# v = velocity (km/s)
-# print("Position (km):", r)
-# print("Velocity (km/s):", v)
+# = datetime.now(timezone.utc)
