@@ -1,4 +1,4 @@
-from nicegui import ui, run
+from nicegui import ui
 import os 
 import sys
 import drawSatellite as ds
@@ -15,7 +15,7 @@ satellite_dict = {"ISS": (), "Hubble": (), "Starlink-1": (), "Landsat": ()} # li
 my_list = passpredictor.get_satellites()
 satellite_dict = {item: None for item in my_list} # set dict to have the sat names as keys
 # list of selected satellites to show on map
-selected_satellites = set()
+selected_satellites = set() 
 # satellite times
 satellite_labels = {}
 
@@ -23,20 +23,6 @@ cycle_counter = 59
 force_update = False
 user_marker = None
 my_map = None
-
-# update sat times
-def calculate_all_times(sat_names):
-    results = {}
-    for name in sat_names:
-        # TODO: Your heavy backend math goes here!
-        # time_left = get_time_to_view(name)
-        time_left = riseset.nextRiseTimeHM(name, (0,0)) # Dummy data
-        
-        results[name] = time_left
-        
-    return results # Return a simple dictionary of { 'Sat Name': '12:34' }
-
-    
 @ui.page('/')
 def main_page():
     # resets on page reload
@@ -68,18 +54,19 @@ def main_page():
         #ui.notify(f'Tracking: {list(selected_satellites)}')
 
     # update satellite time labels
-    async def update_countdown_times():
-        current_sats = list(satellite_labels.keys())
-        
-        if not current_sats:
-            return # Don't bother doing math if the sidebar is empty
-            
-        # 3. This will now work flawlessly without crashing!
-        new_times = await run.cpu_bound(calculate_all_times, current_sats)
-        
-        for sat_name, time_text in new_times.items():
-            if sat_name in satellite_labels:
-                satellite_labels[sat_name].set_text(time_text)
+    def update_countdown_times():
+        # This will run every 60 seconds
+        rise_times = riseset.nextRiseTimeHM((0,0))
+        for sat_name, label in satellite_labels.items():
+            try:
+                #loc = user_marker.props.get('latlng')
+                #print("it works")
+                time_left = rise_times[sat_name]
+                
+                label.set_text(time_left)
+            except:
+                print("fail")
+                continue
 
     # Sidebar sort function
     def sort_satellites(e):
@@ -266,6 +253,7 @@ def main_page():
             force_update = False
             
         if (cycle_counter % 60 == 0):
+            # update countdowns every minute
             # clear map except for actual map layer
             for layer in list(my_map.layers)[1:]:
                 if layer != user_marker:
@@ -281,8 +269,6 @@ def main_page():
 
     # main loop of webpage
     ui.timer(1.0, update_cycle)
-    # run countdown times initially, then every 60 seconds
-    ui.timer(0.1, update_countdown_times, once=True)
     ui.timer(60.0, update_countdown_times)
 
     
