@@ -20,8 +20,9 @@ def get_satellites():
 class passPredictor:
     def __init__(self, selected_satellites):
         self.tleSources = ["https://www.amsat.org/tle/dailytle.txt"]
-        self.update_tles()
         self.selected_satellites = selected_satellites
+        self.update_tles()
+        
         
     def update_tles(self):
         self.tles = tlefetch.fetch_all_tles(self.tleSources)

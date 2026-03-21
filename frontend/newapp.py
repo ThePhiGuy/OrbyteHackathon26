@@ -1,11 +1,15 @@
 from nicegui import ui
 import os 
 import sys
+import drawSatellite as ds
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import passpredictor
 
+# API object
+API = passpredictor.passPredictor(())
 # list of all satellites
 satellite_dict = {"ISS": (), "Hubble": (), "Starlink-1": (), "Landsat": ()} # lil test
+# set dict to satellite names
 my_list = passpredictor.get_satellites()
 satellite_dict = {item: None for item in my_list} # set dict to have the sat names as keys
 # list of selected satellites to show on map
@@ -59,6 +63,15 @@ def main_page():
             
     # 3. Map & Starting Marker
     my_map = ui.leaflet(center=(20, 0), zoom=2).classes('w-full h-screen')
+
+    # every five seconds, update all drawn lines
+    def update_cycle():
+        
+
+    # main loop of webpage
+    ui.timer(5.0, update_cycle)
+
+
 
 if __name__ in {"__main__", "__mp_main__"}:
     ui.run(title="Satellite App", reload=False)
