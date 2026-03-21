@@ -81,7 +81,7 @@ def main_page():
 
 
     # main loop of webpage
-    ui.timer(5.0, update_cycle)
+    ui.timer(10.0, update_cycle)
 
 
 
