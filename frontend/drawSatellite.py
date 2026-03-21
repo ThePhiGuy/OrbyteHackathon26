@@ -15,7 +15,6 @@ def drawVisCircle(my_map, lat, lon, radVis) :
 def drawFlightPath(my_map, coords) :
     # Goal: To draw the pre-calculated future flightpath the satellite using a polyline
     # Parameters: coords - a List of tuples [lat, lon]
-    path = my_map.generic_layer(name='polyline', args=[path_history, {'color': 'red', 'weight': 3}])
     my_map.generic_layer(
     name = 'polyline', 
     args = [coords, {'color': 'red', 'weight': 4, 'opacity': 0.8}]
