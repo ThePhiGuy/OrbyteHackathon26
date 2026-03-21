@@ -47,12 +47,13 @@ def main_page():
         # Popup for tracking
         #ui.notify(f'Tracking: {list(selected_satellites)}')
 
-    # 1. Sidebar 
+    # Sidebar 
     with ui.left_drawer(value=True).classes('bg-gray-100 p-4 flex flex-col'):
         
         # 2. Search Bar
         ui.input('Search satellites...', on_change=filter_satellites).classes('w-full mb-4')
-        
+        # 3. Sorting dropdown menu
+        select1 = ui.select(["Unsorted", "Alphabetical", "Acquisition of Signal"], value="Unsorted").classes('w-full mb-4')
         # The scroll area for the buttons
         with ui.scroll_area().classes('w-full flex-grow border p-2'):
             for key in satellite_dict.keys():
@@ -67,8 +68,17 @@ def main_page():
                 
                 # lock in 'key' and 'btn' for this specific loop iteration
                 btn.on_click(lambda e, k=key, b=btn: select_satellite(k, b))
-            
-    # 3. Map & Starting Marker
+    
+    # User Location
+    with ui.card():
+        ui.label('Input Your Location')
+
+        with ui.row():
+            lat_input = ui.input(label='Lat')
+            lon_input = ui.input(label='Long')
+
+        ui.button('Submit')#, on_click=submit_location)
+    # Map & Starting Marker
     my_map = ui.leaflet(center=(20, 0), zoom=2, options={
         'maxBounds': [[-90, -180], [90, 180]], 
         'maxBoundsViscosity': 1.0              
