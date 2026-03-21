@@ -1,5 +1,6 @@
-# this file contains riseSetTimes() which provides 
-# the times a satellite rises above and sets below the horizon
+# this file contains methods to calculate the 
+# times a satellite rises above, peaks, and sets below the horizon
+# and the satellite's next rise time
 # written by Joshua Rogan (jbr25@calvin.edu) for Calvin Hackathon 2026
 
 import numpy as np
@@ -9,6 +10,7 @@ from skyfield.api import EarthSatellite, load, wgs84
 
 # myLocation should be tuple of lat and lon
 # satelliteName should be from amsat linked below
+# hrs (int) for offset from current time, default is 8
 # outputs tuple of list of utcTimes and list of events
 def riseSetTimesHoursOffset(satelliteName, myLocation, hrs = 8):
     satDict = tlefetch.fetch_tles("https://www.amsat.org/tle/dailytle.txt")
