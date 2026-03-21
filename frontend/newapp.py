@@ -5,9 +5,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import passpredictor
 
 # list of all satellites
-satellite_dict = {"ISS": (), "Hubble": (), "Starlink-1": (), "Landsat": ()}
+satellite_dict = {"ISS": (), "Hubble": (), "Starlink-1": (), "Landsat": ()} # lil test
 my_list = passpredictor.get_satellites()
-satellite_dict = {item: None for item in my_list}
+satellite_dict = {item: None for item in my_list} # set dict to have the sat names as keys
 # list of selected satellites to show on map
 selected_satellites = set()
 
