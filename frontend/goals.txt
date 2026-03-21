@@ -6,7 +6,11 @@ Goals for final project:
 - List of all Satellites
     - Selectable/Deslectable Satellites
     - Updates during Map redraws
--
+- Draws Satellite Flight Paths
+- Visibility of Satellites
+    - Draws a Circle of the area of Visibility
+    - Can Calculate the next Visible time at Your Location
+        - Takes in User Inputted Location
 
 Maybes:
 - Flightpaths showing error potential when selected
