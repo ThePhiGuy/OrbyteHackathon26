@@ -28,8 +28,6 @@ satDict = tlefetch.fetch_tles("https://www.amsat.org/tle/dailytle.txt")
 def riseSetTimesHoursOffset(satelliteName, myLocation, hrs = 24):
     l1 = satDict.get(satelliteName)["line1"]
     l2 = satDict.get(satelliteName)["line2"]
-    # print(l1)
-    # print(l2)
     satellite = EarthSatellite(l1, l2)
     # make satellite obj for use in find_events()
 
