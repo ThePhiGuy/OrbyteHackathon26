@@ -9,7 +9,7 @@ from skyfield.api import EarthSatellite, load, wgs84
 
 # myLocation should be tuple of lat and lon
 def riseSetTimesOneDay(satelliteName, myLocation):
-    loc = convertfromtle.TLEtoGeodetic()
+    loc = convertfromtle.TLEtoGeodetic(satellites[satelliteName].data)
     
     loc = wgs84.latlon(myLocation)
     t0 = datetime.now(timezone.utc)
