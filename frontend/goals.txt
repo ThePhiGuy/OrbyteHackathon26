@@ -9,4 +9,4 @@ Goals for final project:
 -
 
 Maybes:
-- 
+- Flightpaths showing error potential when selected
