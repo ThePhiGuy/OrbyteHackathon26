@@ -3,6 +3,7 @@ import os
 import sys
 import drawSatellite as ds
 import getRadVisibility as grv
+from datetime import datetime, timezone, timedelta
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import passpredictor
 import riseset
@@ -54,16 +55,44 @@ def main_page():
         #ui.notify(f'Tracking: {list(selected_satellites)}')
 
     # update satellite time labels
+    def get_countdown_string(target_time_str):
+    # Get current UTC time
+        now_utc = datetime.now(timezone.utc)
+        
+        # Parse target hours and minutes
+        target_hours, target_minutes = map(int, target_time_str.split(':'))
+        
+        # Create target datetime object for today
+        target_time = now_utc.replace(hour=target_hours, minute=target_minutes, second=0, microsecond=0)
+        
+        # Handle midnight rollover: if target time has passed, it occurs tomorrow
+        if target_time < now_utc:
+            target_time += timedelta(days=1)
+            
+        # Calculate time remaining
+        time_remaining = target_time - now_utc
+        
+        # Convert to hours and minutes
+        total_seconds = int(time_remaining.total_seconds())
+        hours, remainder = divmod(total_seconds, 3600)
+        minutes = remainder // 60
+        
+        # Format output as HH:MM
+        return f"{hours:02d}:{minutes:02d}"
+
+
     def update_countdown_times():
         # This will run every 60 seconds
-        rise_times = riseset.nextRiseTimeHM((0,0))
+        rise_times = riseset.nextRiseTimeDict()
+        current_utc_time = datetime.now(timezone.utc)
         for sat_name, label in satellite_labels.items():
             try:
                 #loc = user_marker.props.get('latlng')
                 #print("it works")
-                time_left = rise_times[sat_name]
+                sat_utc_arrival_string = rise_times[sat_name]
+                time_left = get_countdown_string(sat_utc_arrival_string)
                 
-                label.set_text(time_left)
+                label.text = time_left
             except:
                 print("fail")
                 continue
