@@ -1,59 +1,126 @@
 from nicegui import ui
-import random
-import drawSatellite as drawSat
-import getRadVisibility as getRadVisi
+import os 
+import sys
+import drawSatellite as ds
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import passpredictor
 
-# Keep track of where the satellite has been
-path_history = [[20, 0]]
-orbit_coordinates = [
-        [34.0522, -118.2437], # Los Angeles
-        [39.7392, -104.9903], # Denver
-        [41.8781, -87.6298],  # Chicago
-        [40.7128, -74.0060]   # New York
-]
+# API object
+API = passpredictor.passPredictor(())
+# list of all satellites
+satellite_dict = {"ISS": (), "Hubble": (), "Starlink-1": (), "Landsat": ()} # lil test
+# set dict to satellite names
+my_list = passpredictor.get_satellites()
+satellite_dict = {item: None for item in my_list} # set dict to have the sat names as keys
+# list of selected satellites to show on map
+selected_satellites = set()
 
 @ui.page('/')
 def main_page():
-    
-    # 1. Sidebar
-    with ui.left_drawer(value=True).classes('bg-gray-100 p-4'):
-        ui.label('Satellite Tracker').classes('text-xl font-bold mb-4')
-        coord_label = ui.label('Waiting for data...')
-    
+    # resets on page reload
+    satellite_ui_elements = {}
+    # user's location marker
+    user_marker = None
 
-    # 2. Map & Starting Marker
+    # filter satellites
+    def filter_satellites(e):
+        # e.value gets the text typed into the input
+        search_term = e.value.lower()
+        for name, button in satellite_ui_elements.items():
+            button.set_visibility(search_term in name.lower())
+    
+    # select satellite
+    def select_satellite(sat_name, btn_object):
+        # deselect if selected
+        if sat_name in selected_satellites:
+            selected_satellites.remove(sat_name)
+            btn_object.props('color=grey-4') # Back to light grey
+            btn_object.classes(replace='w-full mb-2 text-black') # change text color for readability
+        # If it's not selected, select it
+        else:
+            selected_satellites.add(sat_name) 
+            btn_object.props('color=grey-9') # Turn dark grey
+            btn_object.classes(replace='w-full mb-2 text-white') # change text color for readability
+            
+        # Popup for tracking
+        #ui.notify(f'Tracking: {list(selected_satellites)}')
+
+    # 1. Sidebar 
+    with ui.left_drawer(value=True).classes('bg-gray-100 p-4 flex flex-col'):
+        
+        # 2. Search Bar
+        ui.input('Search satellites...', on_change=filter_satellites).classes('w-full mb-4')
+        
+        # The scroll area for the buttons
+        with ui.scroll_area().classes('w-full flex-grow border p-2'):
+            for key in satellite_dict.keys():
+                # Create button with default light grey color
+                if key in selected_satellites:
+                    btn = ui.button(key, color="grey-9").classes('w-full mb-2 text-white')
+                else:
+                    btn = ui.button(key, color="grey-4").classes('w-full mb-2 text-black')
+                
+                # Add to our dictionary so the search bar can find it
+                satellite_ui_elements[key] = btn
+                
+                # lock in 'key' and 'btn' for this specific loop iteration
+                btn.on_click(lambda e, k=key, b=btn: select_satellite(k, b))
+            
+    # 3. Map & Starting Marker
     my_map = ui.leaflet(center=(20, 0), zoom=2).classes('w-full h-screen')
-    sat_marker = drawSat.drawSatellite(34, -118, getRadVisi.getVisRad(650), "https://img.freepik.com/premium-psd/satellite-isolated-transparent-background_1073071-13672.jpg")
-    
-    # 3. Create the Polyline (The Path)
-    # We pass the history list, plus standard Leaflet styling options
-    sat_path = my_map.generic_layer(name='polyline', args=[path_history, {'color': 'red', 'weight': 3}])
-    my_map.generic_layer(
-        name = 'polyline', 
-        args = [orbit_coordinates, {'color': 'red', 'weight': 4, 'opacity': 0.8}]
-    )
-    # 4. Update Function
-    def update_satellite():
-        print("Running...")
-        # Get the last known coordinate and move slightly from there
-        last_lat, last_lon = path_history[len(path_history)-1]
-        new_lat = last_lat + random.uniform(-5, 5)
-        new_lon = last_lon + random.uniform(-5, 5)
-        
-        # Move the physical marker
-        sat_marker.move(new_lat, new_lon)
-        
-        # Add the new coordinate to our history list
-        path_history.append([new_lat, new_lon])
-        
-        # Push the updated history list directly to Leaflet to extend the line!
-        #sat_path.run_layer_method('addLatLng', [new_lat, new_lon])
-        sat_path = my_map.generic_layer(name='polyline', args=[path_history, {'color': 'red', 'weight': 3}])
-        # Update the UI text
-        coord_label.set_text(f'Lat: {new_lat:.2f}, Lon: {new_lon:.2f}')
 
-    ui.timer(5.0, update_satellite)
+    # 4. User Location Inputs
+    def submit_location(my_map):
+        nonlocal user_marker
+
+        try:
+            lat = float(lat_input.value)
+            lon = float(lon_input.value)
+
+            # Remove old marker if exists
+            if user_marker:
+                user_marker.remove()
+
+            # Add new marker
+            user_marker = my_map.marker(latlng=(lat, lon))
+
+            # Center map on user
+            my_map.set_center((lat, lon))
+
+            ui.notify(f'Location set to: ({lat}, {lon})')
+
+        except:
+            ui.notify('Invalid input!', color='negative')
+
+    my_map = ui.leaflet(...).classes('absolute top-4 left-4 z-10 w-72')
+    with ui.card():
+        ui.label('Input Your Location')
+
+        with ui.row():
+            lat_input = ui.input(...)
+            lon_input = ui.input(...)
+
+        ui.button('Submit', on_click=submit_location)
+
+    # every five seconds, update all drawn lines
+    def update_cycle():
+        # clear map except for actual map layer
+        for layer in list(my_map.layers)[1:]:
+            if layer != user_marker:
+                my_map.remove_layer(layer)
+
+        print("working")
+        API.update_selected(list(selected_satellites))
+        for sat in selected_satellites:
+            path = API.get_path(sat)
+            ds.drawSatellite(my_map, path[0][0], path[0][1], path[0][2], path, 'red')
+
+
+    # main loop of webpage
+    ui.timer(10.0, update_cycle)
+
+
 
 if __name__ in {"__main__", "__mp_main__"}:
-    # As long as PyQt6 is installed, this will open in a native app window!
-    ui.run(title = "Satellite App", reload = False)
+    markers = []
+    ui.run(title="Satellite App", reload=False)
