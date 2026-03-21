@@ -11,7 +11,7 @@ def drawVisCircle(my_map, lat, lon, radVis, color) :
     # Parameters: Latitude, Longitude, Radian of Visible Area Currently
     my_map.generic_layer(
         name='circle', 
-        args=[[lat, lon], {'color': 'red', 'radius': radVis}]
+        args=[[lat, lon], {'color': color, 'radius': radVis}]
     )
     
 def drawFlightPath(my_map, coords, color):
@@ -42,7 +42,7 @@ def drawFlightPath(my_map, coords, color):
         if len(segment) > 1: # Only draw if there are enough points to make a line
             my_map.generic_layer(
                 name='polyline', 
-                args=[segment, {'color': 'red', 'weight': 4, 'opacity': 0.8}]
+                args=[segment, {'color': color, 'weight': 4, 'opacity': 0.8}]
             )
 
 def drawSatellite (my_map, lat, lon, radVisible, coords, color,
