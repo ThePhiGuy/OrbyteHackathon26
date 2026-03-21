@@ -66,7 +66,7 @@ class satelliteData:
 
     def get_path(self):
         positions_list = list(self.positions)
-        curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle["line1"], self.tle["line2"], self.dt*self.future_predictions)
+        curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle["line1"], self.tle["line2"], self.future_predictions)
         self.positions.popleft()
         self.positions.append(curr)
         return positions_list
