@@ -92,13 +92,13 @@ def formatUTC(time):
     return time.utc_strftime("%Y-%m-%d %H:%M:%S")
 
 # helper to convert utc to string "hours, minutes, seconds"
-def hoursMinsSecs(utcDateTime):
-    return(f"{utcDateTime.hour}, {utcDateTime.minute}, {utcDateTime.second}")
+def hoursMins(utcDateTime):
+    return(f"{utcDateTime.hour}:{utcDateTime.minute}")
 
 # function using nextRiseTime to calculate risetime and returns in HMS string
-def nextRiseTimeHMS(satelliteName, myLocation):
+def nextRiseTimeHM(satelliteName, myLocation):
     t = nextRiseTime(satelliteName, myLocation)
-    return hoursMinsSecs(t)
+    return hoursMins(t)
 
 if __name__ == "__main__":
     sat = "RS-22"
@@ -108,4 +108,4 @@ if __name__ == "__main__":
     # print(nextSetTime(sat, (42.9634, -85.6681)))
     # print(nextPassDuration(sat, (42.9634, -85.6681)))
     for satellite in satDict:
-        print(satellite, nextRiseTimeHMS(satellite, (42.9634, -85.6681)))
+        print(satellite, nextRiseTimeHM(satellite, (42.9634, -85.6681)))
