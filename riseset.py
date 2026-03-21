@@ -26,10 +26,10 @@ satDict = tlefetch.fetch_tles("https://www.amsat.org/tle/dailytle.txt")
 # outputs tuple of list of utcTimes and list of events
 
 def riseSetTimesHoursOffset(satelliteName, myLocation, hrs = 24):
-    # satDict = tlefetch.fetch_tles("https://www.amsat.org/tle/dailytle.txt")
-
     l1 = satDict.get(satelliteName)["line1"]
     l2 = satDict.get(satelliteName)["line2"]
+    # print(l1)
+    # print(l2)
     satellite = EarthSatellite(l1, l2)
     # make satellite obj for use in find_events()
 
@@ -37,8 +37,9 @@ def riseSetTimesHoursOffset(satelliteName, myLocation, hrs = 24):
     # format location parameter
     
     ts = load.timescale()
-    t0 = ts.from_datetime(datetime.now(timezone.utc))
-    t1 = ts.from_datetime(datetime.now(timezone.utc) + timedelta(hours = hrs))
+    now = datetime.now(timezone.utc)
+    t0 = ts.from_datetime(now)
+    t1 = ts.from_datetime(now + timedelta(hours = hrs))
     # set time vars
 
     t, events = satellite.find_events(loc, t0, t1, altitude_degrees=0.0)
@@ -107,12 +108,13 @@ def nextRiseTimeDict(myLocation):
     return dictionary
 
 if __name__ == "__main__":
-    sat = "RS-22"
-    # t, events = riseSetTimesHoursOffset(sat, (42.9634, -85.6681))
-    # print(t, events)
-    # print(nextRiseTime(sat, (42.9634, -85.6681)))
-    # print(nextSetTime(sat, (42.9634, -85.6681)))
-    # print(nextPassDuration(sat, (42.9634, -85.6681)))
+    sat = "ISS"
+    t, events = riseSetTimesHoursOffset(sat, (42.9634, -85.6681))
+    # print(t.utc_datetime())
+    # print(events)
+    print(nextRiseTime(sat, (42.9634, -85.6681)))
+    print(nextSetTime(sat, (42.9634, -85.6681)))
+    print(nextPassDuration(sat, (42.9634, -85.6681)))
     # for satellite in satDict:
         # print(satellite, nextRiseTimeHM(satellite, (42.9634, -85.6681)))
     print(nextRiseTimeDict((42.9634, -85.6681)))
