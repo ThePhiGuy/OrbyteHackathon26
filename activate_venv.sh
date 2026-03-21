@@ -4,8 +4,9 @@
 # Check if venv exists, create it if not
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."
-    python3 -m venv venv
+    python3 -m venv .venv
     echo "Installing dependencies..."
+    source ./.venv/bin/activate
     pip install -r requirements.txt
 else
     echo "Virtual environment found."
