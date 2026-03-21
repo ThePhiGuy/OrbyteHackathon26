@@ -80,6 +80,27 @@ def TLEtoGeodeticDTSecOffset(line1, line2, dt, secOffset):
 
     return float(lat), float(lon), float(alt) 
 
+def BatchTLEtoGeodeticSecOffset(line1, line2, secOffset, points):
+    ts = load.timescale()
+    satellite = EarthSatellite(line1, line2)
+    currentTime = datetime.now(timezone.utc)
+
+    #compute all times in one vector
+    offsets = np.arange(0, points * secOffset, secOffset)  #(start,stop,step)
+    datetimes = [currentTime + timedelta(seconds=int(s)) for s in offsets]
+    times = ts.from_datetimes(datetimes)
+
+    #compute geocentric positions for each time
+    geocentric = satellite.at(times)
+    subpoints = geocentric.subpoint()  #subpoint is projection of geocent onto earth
+
+    #make list of tuples
+    tupList = list(zip(
+        (float(lat) for lat in subpoints.latitude.degrees),
+        (float(lon) for lon in subpoints.longitude.degrees),
+        (float(alt) for alt in subpoints.elevation.km)
+    ))
+    return tupList
 
 # line1, line2 are TLE components
 # dt is datetime object (UTC)
@@ -110,5 +131,9 @@ if __name__ == "__main__":
     # print(TLEtoGeodeticSecOffset(line1, line2, 5))
     # print(TLEtoGeodeticDTSecOffset(line1, line2, datetime.now(timezone.utc), 5))
     # print(getAltAzDeg(line1, line2, datetime.now(timezone.utc), (42.9634, -85.6681)))
+    temp = (BatchTLEtoGeodeticSecOffset(line1, line2, 5, 64800))
+    for tup in temp[:50]:
+        print(tup)
+    print(len(temp))
 
 # = datetime.now(timezone.utc)

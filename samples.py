@@ -12,5 +12,10 @@ def sampleDataList():
         list.append(convertfromtle.TLEtoGeodeticSecOffset(ISSline1, ISSline2, i*5))
     return list
 
+# def fasterSampleDataList():
+#     list = []
+#     (convertfromtle.BatchTLEtoGeodeticSecOffset(ISSline1, ISSline2, 5, 6480))
+#     return list
+
 if __name__ == "__main__":
     print(sampleDataList())
