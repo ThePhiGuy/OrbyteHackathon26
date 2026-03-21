@@ -88,7 +88,10 @@ class satelliteData:
         # for i in range(0, self.future_predictions, self.dt):
         #     curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle["line1"], self.tle["line2"], i)
         #     self.positions.append(curr)
-        self.positions.extend(convertfromtle.BatchTLEtoGeodeticSecOffset(self.tle["line1"], self.tle["line2"], self.dt, self.future_predictions))
+        
+        num_points = self.future_predictions / self.dt
+        # adjusts to avoid insanely long path since point-based, not time-based
+        self.positions.extend(convertfromtle.BatchTLEtoGeodeticSecOffset(self.tle["line1"], self.tle["line2"], self.dt, num_points))
 
 if __name__ == "__main__":
     # print(get_satellites())
@@ -106,10 +109,10 @@ if __name__ == "__main__":
     sat = satelliteData(sat_name, sat_tle)
 
     # Check results
-    # print("Number of positions:", len(sat.positions))
-    # print("First 5 positions:")
-    # for p in list(sat.positions)[:5]:
-    #     print(p)
+    print("Number of positions:", len(sat.positions))
+    print("First 5 positions:")
+    for p in list(sat.positions)[:5]:
+        print(p)
 
     # First call
     path1 = sat.get_path()
