@@ -6,26 +6,26 @@
 import requests
 
 # utilizes a URL that points to a set of TLE's downloads them and puts them
-# into a dictionary containing satelite name as the key
+# into a dictionary containing satellite name as the key
 # and the values being line 1 and line 2 of the TLE.
 def fetch_tles(url):
     response = requests.get(url)
     response.raise_for_status() # checks for a web error
 
     data = response.text.strip().splitlines()
-    satelites = dict()
+    satellites = dict()
 
     # goes by threes and skips the final two.
     for i in range(0, len(data) - 2, 3):
         name  = data[i].strip()
         line1 = data[i + 1].strip()
         line2 = data[i + 2].strip()
-        satelites[name] = {
+        satellites[name] = {
             "line1": line1,
             "line2": line2
         }
 
-    return satelites
+    return satellites
 
 # this function does fetch_tles for a list of urls that have TLE's
 def fetch_all_tles(urls):
