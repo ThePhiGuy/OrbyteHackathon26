@@ -1,8 +1,13 @@
 from nicegui import ui
+import os 
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import passpredictor
 
 # list of all satellites
 satellite_dict = {"ISS": (), "Hubble": (), "Starlink-1": (), "Landsat": ()}
-
+my_list = passpredictor.get_satellites()
+satellite_dict = {item: None for item in my_list}
 # list of selected satellites to show on map
 selected_satellites = set()
 
