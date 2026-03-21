@@ -93,7 +93,7 @@ def formatUTC(time):
 
 # helper to convert utc to string "hours, minutes, seconds"
 def hoursMinsSecs(utcDateTime):
-    return(f"{utcDateTime.hour}, {utcDateTime.minute}, {utcDateTime.second}")
+    return(f"{utcDateTime.hour}:{utcDateTime.minute}:{utcDateTime.second}")
 
 # function using nextRiseTime to calculate risetime and returns in HMS string
 def nextRiseTimeHMS(satelliteName, myLocation):
