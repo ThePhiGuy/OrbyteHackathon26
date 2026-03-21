@@ -1,5 +1,5 @@
 # passpredictor.py is a file that provides functionality
-# for combining tles and a specific satelite to provide orbital
+# for combining tles and a specific satellite to provide orbital
 # data for a set of upcoming times.
 #
 # written by Ryan Deaton (rad53@calvin.edu) for Calvin Hackathon '26 on March 2026
@@ -18,41 +18,41 @@ def get_satellites():
     return sats
 
 class passPredictor:
-    def __init__(self, selected_satelites):
+    def __init__(self, selected_satellites):
         self.tleSources = ["https://www.amsat.org/tle/dailytle.txt"]
         self.update_tles()
-        self.selected_satelites = selected_satelites
+        self.selected_satellites = selected_satellites
         
     def update_tles(self):
         self.tles = tlefetch.fetch_all_tles(self.tleSources)
-        self.satelites = dict()
-        for satelite in self.selected_satelites:
-            self.satelites[satelite] = sateliteData(satelite, self.tles[satelite])
+        self.satellites = dict()
+        for satellite in self.selected_satellites:
+            self.satellites[satellite] = satelliteData(satellite, self.tles[satellite])
     
     def update_selected(self, new_selected):
         # Find what's been added and removed
-        current = set(self.selected_satelites)
+        current = set(self.selected_satellites)
         updated = set(new_selected)
 
         added   = updated - current
         removed = current - updated
 
         # Remove deselected satellites
-        for satelite in removed:
-            del self.satelites[satelite]
+        for satellite in removed:
+            del self.satellites[satellite]
 
         # Add newly selected satellites
-        for satelite in added:
-            self.satelites[satelite] = sateliteData(satelite, self.tles[satelite])
+        for satellite in added:
+            self.satellites[satellite] = satelliteData(satellite, self.tles[satellite])
 
         # Update the selected list
-        self.selected_satelites = new_selected
+        self.selected_satellites = new_selected
         
-    def get_path(self, satelite):
-        return self.satelites[satelite].get_path() # this is a list of tuples of (lat, long, alt)
+    def get_path(self, satellite):
+        return self.satellites[satellite].get_path() # this is a list of tuples of (lat, long, alt)
             
 
-class sateliteData:
+class satelliteData:
     def __init__(self, name, tles, future_predictions = 6480, dt = 5):
         self.name = name
         self.dt = dt
