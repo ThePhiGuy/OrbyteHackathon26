@@ -5,8 +5,11 @@
 
 from nicegui import ui
 
-def visCircle(xcoord, ycoord, radVis) :
-    m = ui.leaflet(center=(xcoord, ycoord)).classes('h-32')
+def visCircle(lat, lon, radVis) :
+    # Goal: Display the Area of where the given Satellite could be Seen Currently
+    # Parameters: Latitude, Longitude, Radian of Visible Area Currently
+
+    m = ui.leaflet(center=(lat, lon)).classes('h-32')
     m.generic_layer(name='satellites', args=[m.center, {'color': 'yellow', 'radius': radVis}])
 
 ui.run()
