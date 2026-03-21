@@ -1,18 +1,23 @@
 # this file contains methods to calculate the 
 # times a satellite rises above, peaks, and sets below the horizon
 # and the satellite's next rise time
-# written by Joshua Rogan (jbr25@calvin.edu) for Calvin Hackathon 2026
+# 
+# nextRiseTime()
+# nextPassDuration()
+#
+#  written by Joshua Rogan (jbr25@calvin.edu) for Calvin Hackathon 2026
 
 import numpy as np
 import convertfromtle, tlefetch
 from datetime import datetime, timezone, timedelta
 from skyfield.api import EarthSatellite, load, wgs84
 
+# primarily helper for 
 # myLocation should be tuple of lat and lon
 # satelliteName should be from amsat linked below
-# hrs (int) for offset from current time, default is 8
+# hrs (int) for offset from current time, default is 24
 # outputs tuple of list of utcTimes and list of events
-def riseSetTimesHoursOffset(satelliteName, myLocation, hrs = 8):
+def riseSetTimesHoursOffset(satelliteName, myLocation, hrs = 24):
     satDict = tlefetch.fetch_tles("https://www.amsat.org/tle/dailytle.txt")
 
     l1 = satDict.get(satelliteName)["line1"]
@@ -31,23 +36,43 @@ def riseSetTimesHoursOffset(satelliteName, myLocation, hrs = 8):
     t, events = satellite.find_events(loc, t0, t1, altitude_degrees=0.0)
     # store find_events data
 
-    utcTimes = []
-    for time in t:
-        # utcTimes.append(time.utc_datetime().strftime())
-        utcTimes.append(time.utc_strftime("%Y-%m-%d %H:%M:%S"))
-
-    return utcTimes, events
+    return t, events
 
 # returns next rise time in utc format given
-def nextRiseTime(utcTimes, events):
+# takes same params as riseSetTimesHoursOffset
+def nextRiseTime(satelliteName, myLocation):
+    t, events = riseSetTimesHoursOffset(satelliteName, myLocation)
     i = 0
     while i < len(events):
         if events[i] == 0:
-            return utcTimes[i]
+            return formatUTC(t[i])
+        i += 1
     # look for event 0 (rise) and return
-    return -1
+    return datetime.max
+
+#  returns time of pass in seconds as float
+#  takes same params as riseSetTimesHoursOffset
+def nextPassDuration(satelliteName, myLocation):
+    t, events = riseSetTimesHoursOffset(satelliteName, myLocation)
+    i = 0
+    while i < len(events):
+        if events[i] == 0:
+            j = i
+            while j < len(events):
+                if events[j] == 2:
+                    duration = (t[j].utc_datetime() - t[i].utc_datetime())
+                    return float(duration.total_seconds())
+                j += 1
+        i += 1
+    # find rise time, then find next set time, return difference
+    return -1 
+
+# helper method to format time nicely
+def formatUTC(utcTime):
+    return utcTime.utc_strftime("%Y-%m-%d %H:%M:%S")
 
 if __name__ == "__main__":
     t, events = riseSetTimesHoursOffset("AO-07", (42.9634, -85.6681))
     print(t, events)
-    print(nextRiseTime(t, events))
+    print(nextRiseTime("AO-07", (42.9634, -85.6681)))
+    print(nextPassDuration("AO-07", (42.9634, -85.6681)))
