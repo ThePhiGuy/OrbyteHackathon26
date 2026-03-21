@@ -16,6 +16,7 @@ satellite_dict = {item: None for item in my_list} # set dict to have the sat nam
 # list of selected satellites to show on map
 selected_satellites = set()
 cycle_counter = 59
+force_update = False
 @ui.page('/')
 def main_page():
     # resets on page reload
@@ -30,6 +31,7 @@ def main_page():
     
     # select satellite
     def select_satellite(sat_name, btn_object):
+        global force_update
         # deselect if selected
         if sat_name in selected_satellites:
             selected_satellites.remove(sat_name)
@@ -40,9 +42,8 @@ def main_page():
             selected_satellites.add(sat_name) 
             btn_object.props('color=grey-9') # Turn dark grey
             btn_object.classes(replace='w-full mb-2 text-white') # change text color for readability
-        API.update_selected(list(selected_satellites))
-        #path = API.get_path(sat_name)
-        ds.drawSatellite(my_map, path[0][0], path[0][1], grv.getVisRad(path[0][2]), path, 'red')
+        force_update = True
+        print(force_update)
         # Popup for tracking
         #ui.notify(f'Tracking: {list(selected_satellites)}')
 
@@ -77,9 +78,22 @@ def main_page():
 
     def update_cycle():
         global cycle_counter
+        global force_update
         cycle_counter+=1
 
         print("working")
+        print(force_update)
+        if (force_update == True):
+            print("updating...")
+            for layer in list(my_map.layers)[1:]:
+                my_map.remove_layer(layer)
+            API.update_selected(list(selected_satellites))
+            API.update_tles()
+            for sat in selected_satellites:
+                path = API.get_path(sat)
+                ds.drawSatellite(my_map, path[0][0], path[0][1], grv.getVisRad(path[0][2]), path, 'red')
+            force_update = False
+            
         if (cycle_counter % 60 == 0):
             # clear map except for actual map layer
             for layer in list(my_map.layers)[1:]:
@@ -88,11 +102,11 @@ def main_page():
             for sat in selected_satellites:
                 path = API.get_path(sat)
                 ds.drawSatellite(my_map, path[0][0], path[0][1], grv.getVisRad(path[0][2]), path, 'red')
-                cycle_counter = 0
-            
+            cycle_counter = 0
+                
 
     # main loop of webpage
-    ui.timer(5.0, update_cycle)
+    ui.timer(1.0, update_cycle)
 
 
 
