@@ -22,16 +22,23 @@ class sateliteData:
     def __init__(self, name, future_predictions = 64800, dt = 5, tles):
         self.name = name
         self.dt = dt
+        self.tle = tles
         self.future_predictions = future_predictions
-        self.positions = deque([])
+        self.positions = deque(tuple(3))
         self.predict_full_future()
 
-    def get_current_position(self):
-        
-    def get_path():
+    def get_path(self):
+        positions_list = list(self.positions)
+
+        return positions_list
 
     def get_dt(self):
         return self.dt
     
+    def get_future_predictions(self):
+        return self.future_predictions
+    
     def predict_full_future(self):
-        self.positions.append()
+        for i in range(0, self.future_predictions, 5):
+            curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle.line1, self.tle.line2, i)
+            self.
