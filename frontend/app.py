@@ -1,6 +1,7 @@
 from nicegui import ui
 import random
 import genIcon
+import getRadVisibility
 
 # Keep track of where the satellite has been
 path_history = [[20, 0]]
@@ -22,7 +23,7 @@ def main_page():
 
     # 2. Map & Starting Marker
     my_map = ui.leaflet(center=(20, 0), zoom=2).classes('w-full h-screen')
-    sat_marker = genIcon(34, -118, 40, "https://img.freepik.com/premium-psd/satellite-isolated-transparent-background_1073071-13672.jpg")
+    sat_marker = genIcon(34, -118, getVisRad(650), "https://img.freepik.com/premium-psd/satellite-isolated-transparent-background_1073071-13672.jpg")
     
     # 3. Create the Polyline (The Path)
     # We pass the history list, plus standard Leaflet styling options
