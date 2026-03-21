@@ -8,13 +8,13 @@ from nicegui import ui
 import genVisbilityCircle
 
 def drawVisCircle(lat, lon, radVis) :
-    # Goal: Display the Area of where the given Satellite could be Seen Currently
+    # Goal: Display the Area of where the given Satellite could be Seen Currently with a Circle
     # Parameters: Latitude, Longitude, Radian of Visible Area Currently
     visCirc = ui.leaflet(center=(lat, lon)).classes('h-32')
     visCirc.generic_layer(name='satellites', args=[m.center, {'color': 'yellow', 'radius': radVis}])
 
 def drawFlightPath(coords) :
-    # Goal: To draw the pre-calculated future flightpath the satellite
+    # Goal: To draw the pre-calculated future flightpath the satellite using a polyline
     # Parameters: coords - a List of tuples [lat, lon]
     path = my_map.generic_layer(name='polyline', args=[path_history, {'color': 'red', 'weight': 3}])
     my_map.generic_layer(
@@ -24,7 +24,7 @@ def drawFlightPath(coords) :
 
 def drawSatellite (lat, lon, radVisible, coords,
              imageURL= "https://img.freepik.com/premium-psd/satellite-isolated-transparent-background_1073071-13672.jpg") :
-    # Goal: Generate map marker and return it for future changes
+    # Goal: Generate map marker object and return it for future changes
     # Parameters: Latitude, Longitude, Radian of Visible Area Currently, Flightpath Coordinates, Icon Image URL
     # Returns: Marker object
     # Calls: Current Visibility Circle around itself
