@@ -8,5 +8,3 @@ def sampleDataList():
     for i in range(0, 6480):
         list.append(convertfromtle.TLEtoGeodeticSecOffset(ISSline1, ISSline2, i*5))
     return list
-
-print(sampleDataList())
