@@ -11,7 +11,7 @@
 from sgp4.api import Satrec, jday
 import numpy as np
 from datetime import datetime, timezone, timedelta
-from skyfield.api import EarthSatellite, load
+from skyfield.api import EarthSatellite, load, wgs84
 
 # line1, line2 are TLE components of a satellite
 # returns lat, long (in deg), and alt (km) 
@@ -80,13 +80,35 @@ def TLEtoGeodeticDTSecOffset(line1, line2, dt, secOffset):
 
     return float(lat), float(lon), float(alt) 
 
-# Example TLE (ISS)
-line1 = "1 25544U 98067A   26079.87218434  .00009590  00000-0  18573-3 0  9991"
-line2 = "2 25544  51.6346  17.0785 0006366 213.2716 146.7873 15.48402839558062"
+
+# line1, line2 are TLE components
+# dt is datetime object (UTC)
+# myLoc is tuple of (lat, lon) in degrees
+# returns altitude and azimuth in degrees
+def getAltAzDeg(line1, line2, dt, myLoc):
+    ts = load.timescale()
+    t = ts.from_datetime(dt)
+    satellite = EarthSatellite(line1, line2)
+    
+    #user location
+    location = wgs84.latlon(myLoc[0], myLoc[1])
+    
+    #calculate topocentric point from satellite and location
+    difference = satellite - location
+    topocentric = difference.at(t)
+    
+    #assign vals and return
+    alt, az, distance = topocentric.altaz()
+    
+    return float(alt.degrees), float(az.degrees)
 
 if __name__ == "__main__":
-    print(TLEtoGeodetic(line1, line2, datetime.now(timezone.utc)))
-    print(TLEtoGeodeticSecOffset(line1, line2, 5))
-    print(TLEtoGeodeticDTSecOffset(line1, line2, datetime.now(timezone.utc), 5))
+    # Example TLE (ISS)
+    line1 = "1 25544U 98067A   26079.87218434  .00009590  00000-0  18573-3 0  9991"
+    line2 = "2 25544  51.6346  17.0785 0006366 213.2716 146.7873 15.48402839558062"
+    # print(TLEtoGeodetic(line1, line2, datetime.now(timezone.utc)))
+    # print(TLEtoGeodeticSecOffset(line1, line2, 5))
+    # print(TLEtoGeodeticDTSecOffset(line1, line2, datetime.now(timezone.utc), 5))
+    # print(getAltAzDeg(line1, line2, datetime.now(timezone.utc), (42.9634, -85.6681)))
 
 # = datetime.now(timezone.utc)
