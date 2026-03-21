@@ -8,7 +8,7 @@ selected_satellites = set()
 
 @ui.page('/')
 def main_page():
-    # We will define this INSIDE the page so it resets cleanly on reload
+    # resets on page reload
     satellite_ui_elements = {}
 
     # filter satellites
@@ -20,7 +20,7 @@ def main_page():
     
     # select satellite
     def select_satellite(sat_name, btn_object):
-        # If it's already selected, DESELECT it
+        # deselect if selected
         if sat_name in selected_satellites:
             selected_satellites.remove(sat_name)
             btn_object.props('color=grey-4') # Back to light grey
@@ -47,7 +47,7 @@ def main_page():
                 # Add to our dictionary so the search bar can find it
                 satellite_ui_elements[key] = btn
                 
-                # The lambda trick: lock in 'key' and 'btn' for this specific loop iteration
+                # lock in 'key' and 'btn' for this specific loop iteration
                 btn.on_click(lambda e, k=key, b=btn: select_satellite(k, b))
             
     # 3. Map & Starting Marker
