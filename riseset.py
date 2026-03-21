@@ -2,8 +2,10 @@
 # times a satellite rises above, peaks, and sets below the horizon
 # and the satellite's next rise time
 # 
+# riseSetTimesHoursOffset()
 # nextRiseTime()
 # nextPassDuration()
+# formatUTC()
 #
 #  written by Joshua Rogan (jbr25@calvin.edu) for Calvin Hackathon 2026
 
