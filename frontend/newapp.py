@@ -19,6 +19,8 @@ satellite_dict = {item: None for item in my_list} # set dict to have the sat nam
 selected_satellites = set() 
 # satellite times
 satellite_labels = {}
+# user's current location
+user_loc = (0, 0)
 
 cycle_counter = 59
 force_update = False
@@ -56,7 +58,7 @@ def main_page():
 
     # update satellite time labels
     def get_countdown_string(target_time_str):
-    # Get current UTC time
+        # Get current UTC time
         now_utc = datetime.now(timezone.utc)
         
         # Parse target hours and minutes
@@ -78,21 +80,24 @@ def main_page():
         minutes = remainder // 60
         
         # Format output as HH:MM
-        return f"{hours:02d}:{minutes:02d}"
+        return str(f"{hours:02d}:{minutes:02d}")
 
 
     def update_countdown_times():
+        global user_loc
+        global satellite_labels
         # This will run every 60 seconds
-        rise_times = riseset.nextRiseTimeDict()
-        current_utc_time = datetime.now(timezone.utc)
+        rise_times = riseset.nextRiseTimeDict(user_loc)
+        #current_utc_time = datetime.now(timezone.utc)
         for sat_name, label in satellite_labels.items():
             try:
                 #loc = user_marker.props.get('latlng')
                 #print("it works")
                 sat_utc_arrival_string = rise_times[sat_name]
+                #print(get_countdown_string(sat_utc_arrival_string))
                 time_left = get_countdown_string(sat_utc_arrival_string)
-                
-                label.text = time_left
+    
+                label.text = f"{time_left}"
             except:
                 print("fail")
                 continue
@@ -176,11 +181,11 @@ def main_page():
     # User location marker
     def submit_location():
         global user_marker
-
+        global user_loc
         try:
             lat = float(lat_input.value)
             lon = float(lon_input.value)
-
+            user_loc = (lat, lon)
             # Use the map to remove the layer, not the marker itself
             if user_marker:
                 my_map.remove_layer(user_marker)
@@ -192,6 +197,7 @@ def main_page():
             #my_map.set_center((lat, lon))
 
             ui.notify(f'Location set to: ({lat}, {lon})')
+            ui.timer(0.1, update_countdown_times, once=True)
 
         # 3. Specifically catch ValueError so we don't accidentally hide other bugs
         except ValueError: 
@@ -267,8 +273,8 @@ def main_page():
         global force_update
         cycle_counter+=1
 
-        print("working")
-        print(force_update)
+        #print("working")
+        #print(force_update)
         if (force_update == True):
             print("updating...")
             for layer in list(my_map.layers)[1:]:
@@ -298,7 +304,7 @@ def main_page():
 
     # main loop of webpage
     ui.timer(1.0, update_cycle)
-    ui.timer(60.0, update_countdown_times)
+    #ui.timer(60.0, update_countdown_times)
 
     
 
