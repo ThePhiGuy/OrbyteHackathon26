@@ -2,6 +2,7 @@ from nicegui import ui
 import os 
 import sys
 import drawSatellite as ds
+import getRadVisibility as grv
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import passpredictor
 
@@ -14,7 +15,7 @@ my_list = passpredictor.get_satellites()
 satellite_dict = {item: None for item in my_list} # set dict to have the sat names as keys
 # list of selected satellites to show on map
 selected_satellites = set()
-cycle_counter = 0
+cycle_counter = 59
 @ui.page('/')
 def main_page():
     # resets on page reload
@@ -39,7 +40,9 @@ def main_page():
             selected_satellites.add(sat_name) 
             btn_object.props('color=grey-9') # Turn dark grey
             btn_object.classes(replace='w-full mb-2 text-white') # change text color for readability
-            
+        API.update_selected(list(selected_satellites))
+        #path = API.get_path(sat_name)
+        ds.drawSatellite(my_map, path[0][0], path[0][1], grv.getVisRad(path[0][2]), path, 'red')
         # Popup for tracking
         #ui.notify(f'Tracking: {list(selected_satellites)}')
 
@@ -84,12 +87,12 @@ def main_page():
             API.update_selected(list(selected_satellites))
             for sat in selected_satellites:
                 path = API.get_path(sat)
-                ds.drawSatellite(my_map, path[0][0], path[0][1], path[0][2], path, 'red')
+                ds.drawSatellite(my_map, path[0][0], path[0][1], grv.getVisRad(path[0][2]), path, 'red')
                 cycle_counter = 0
             
 
     # main loop of webpage
-    ui.timer(1.0, update_cycle)
+    ui.timer(5.0, update_cycle)
 
 
 
