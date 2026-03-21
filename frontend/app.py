@@ -1,7 +1,7 @@
 from nicegui import ui
 import random
-import genIcon
-import getRadVisibility
+import frontend.drawSatellite as drawSat
+import frontend.getRadVisibility as getRadVisi
 
 # Keep track of where the satellite has been
 path_history = [[20, 0]]
@@ -23,14 +23,14 @@ def main_page():
 
     # 2. Map & Starting Marker
     my_map = ui.leaflet(center=(20, 0), zoom=2).classes('w-full h-screen')
-    sat_marker = genIcon(34, -118, getRadVisibility.getVisRad(650), "https://img.freepik.com/premium-psd/satellite-isolated-transparent-background_1073071-13672.jpg")
+    sat_marker = drawSat.drawSatellite(34, -118, getRadVisi.getVisRad(650), "https://img.freepik.com/premium-psd/satellite-isolated-transparent-background_1073071-13672.jpg")
     
     # 3. Create the Polyline (The Path)
     # We pass the history list, plus standard Leaflet styling options
     sat_path = my_map.generic_layer(name='polyline', args=[path_history, {'color': 'red', 'weight': 3}])
     my_map.generic_layer(
-        name='polyline', 
-        args=[orbit_coordinates, {'color': 'red', 'weight': 4, 'opacity': 0.8}]
+        name = 'polyline', 
+        args = [orbit_coordinates, {'color': 'red', 'weight': 4, 'opacity': 0.8}]
     )
     # 4. Update Function
     def update_satellite():
@@ -56,4 +56,4 @@ def main_page():
 
 if __name__ in {"__main__", "__mp_main__"}:
     # As long as PyQt6 is installed, this will open in a native app window!
-    ui.run(title="Satellite App", reload=False)
+    ui.run(title = "Satellite App", reload = False)
