@@ -5,7 +5,6 @@
 # written by Ty Veldhouse (tpv8@calvin.edu) for Calvin Hackathon '26 on March 2026
 
 from nicegui import ui
-import genVisbilityCircle
 
 def drawVisCircle(lat, lon, radVis) :
     # Goal: Display the Area of where the given Satellite could be Seen Currently with a Circle
