@@ -2,8 +2,8 @@ Project Title:
 Orbyte – Satellite Flight Path Tracker
 
 Description:
-Orbyte is a modern 
-Built during HackTheFuture 2026 in under 24 hours.
+Orbyte is a modern satellite flight path tracker
+built during HackTheFuture 2026 in under 24 hours.
 
 **************
 Features
@@ -16,7 +16,7 @@ Features
 - Project written in Python
 - HTML website output
 - NiceGUI driven frontend
-- Data pilled from TLEData (Two Line Elements)
+- Data pulled from TLEData (Two Line Elements)
 
 **************
 Project Structure:
@@ -42,7 +42,7 @@ Hackathon Details
 
 Team Members
 - Ryan Deaton – Backend Development
-- Josh Rogan – Backend Development
+- Joshua Rogan – Backend Development
 - Isaiah Vanhorn – Frontend Development
 - Ty Veldhouse - Frontend Development
 
