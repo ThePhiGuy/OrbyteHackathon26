@@ -14,7 +14,7 @@ my_list = passpredictor.get_satellites()
 satellite_dict = {item: None for item in my_list} # set dict to have the sat names as keys
 # list of selected satellites to show on map
 selected_satellites = set()
-
+cycle_counter = 0
 @ui.page('/')
 def main_page():
     # resets on page reload
@@ -65,23 +65,31 @@ def main_page():
                 btn.on_click(lambda e, k=key, b=btn: select_satellite(k, b))
             
     # 3. Map & Starting Marker
-    my_map = ui.leaflet(center=(20, 0), zoom=2).classes('w-full h-screen')
+    my_map = ui.leaflet(center=(20, 0), zoom=2, options={
+        'maxBounds': [[-90, -180], [90, 180]], 
+        'maxBoundsViscosity': 1.0              
+    }).classes('w-full h-screen')
 
     # every five seconds, update all drawn lines
+
     def update_cycle():
-        # clear map except for actual map layer
-        for layer in list(my_map.layers)[1:]:
-            my_map.remove_layer(layer)
+        global cycle_counter
+        cycle_counter+=1
 
         print("working")
-        API.update_selected(list(selected_satellites))
-        for sat in selected_satellites:
-            path = API.get_path(sat)
-            ds.drawSatellite(my_map, path[0][0], path[0][1], path[0][2], path, 'red')
-
+        if (cycle_counter % 60 == 0):
+            # clear map except for actual map layer
+            for layer in list(my_map.layers)[1:]:
+                my_map.remove_layer(layer)
+            API.update_selected(list(selected_satellites))
+            for sat in selected_satellites:
+                path = API.get_path(sat)
+                ds.drawSatellite(my_map, path[0][0], path[0][1], path[0][2], path, 'red')
+                cycle_counter = 0
+            
 
     # main loop of webpage
-    ui.timer(10.0, update_cycle)
+    ui.timer(1.0, update_cycle)
 
 
 
