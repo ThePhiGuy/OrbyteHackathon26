@@ -2,9 +2,9 @@ from nicegui import ui
 import random
 
 # Keep track of where the satellite has been
-path_history = [[20, 0]]
+path_history = [[20, 0, 10]]
 orbit_coordinates = [
-        [34.0522, -118.2437], # Los Angeles
+        [34.0522, -118.2437, 100], # Los Angeles
         [39.7392, -104.9903], # Denver
         [41.8781, -87.6298],  # Chicago
         [40.7128, -74.0060]   # New York

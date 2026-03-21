@@ -1,7 +1,7 @@
 from nicegui import ui
 
 # list of all satellites
-satellite_list = {"ISS": (), "Hubble": (), "Starlink-1": (), "Landsat": ()}
+satellite_dict = {"ISS": (), "Hubble": (), "Starlink-1": (), "Landsat": ()}
 
 # list of selected satellites to show on map
 selected_satellites = set()
@@ -24,13 +24,15 @@ def main_page():
         if sat_name in selected_satellites:
             selected_satellites.remove(sat_name)
             btn_object.props('color=grey-4') # Back to light grey
-        # If it's not selected, SELECT it
+            btn_object.classes(replace='w-full mb-2 text-black') # change text color for readability
+        # If it's not selected, select it
         else:
-            selected_satellites.add(sat_name) # Sets use .add(), not .append()!
+            selected_satellites.add(sat_name) 
             btn_object.props('color=grey-9') # Turn dark grey
+            btn_object.classes(replace='w-full mb-2 text-white') # change text color for readability
             
         # Popup for tracking
-        ui.notify(f'Tracking: {list(selected_satellites)}')
+        #ui.notify(f'Tracking: {list(selected_satellites)}')
 
     # 1. Sidebar 
     with ui.left_drawer(value=True).classes('bg-gray-100 p-4 flex flex-col'):
@@ -40,9 +42,9 @@ def main_page():
         
         # The scroll area for the buttons
         with ui.scroll_area().classes('w-full flex-grow border p-2'):
-            for key in satellite_list.keys():
+            for key in satellite_dict.keys():
                 # Create button with default light grey color
-                btn = ui.button(key, color="grey-4").classes('w-full mb-2')
+                btn = ui.button(key, color="grey-4").classes('w-full mb-2 text-black')
                 
                 # Add to our dictionary so the search bar can find it
                 satellite_ui_elements[key] = btn
