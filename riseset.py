@@ -48,7 +48,7 @@ def nextRiseTime(satelliteName, myLocation):
     i = 0
     while i < len(events):
         if events[i] == 0:
-            return formatUTC(t[i])
+            return t[i].utc_datetime()
         i += 1
     # look for event 0 (rise) and return
     return datetime.max
@@ -60,7 +60,7 @@ def nextSetTime(satelliteName, myLocation):
     i = 0
     while i < len(events):
         if events[i] == 2:
-            return formatUTC(t[i])
+            return t[i].utc_datetime()
         i += 1
     # look for event 2 (set) and return
     return datetime.max
@@ -83,8 +83,8 @@ def nextPassDuration(satelliteName, myLocation):
     return -1 
 
 # helper method to format time nicely
-def formatUTC(utcTime):
-    return utcTime.utc_strftime("%Y-%m-%d %H:%M:%S")
+def formatUTC(time):
+    return time.utc_strftime("%Y-%m-%d %H:%M:%S")
 
 if __name__ == "__main__":
     sat = "RS-22"

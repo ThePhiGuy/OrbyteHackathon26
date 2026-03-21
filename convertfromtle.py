@@ -10,7 +10,7 @@
 # 
 # written by Joshua Rogan (jbr25@calvin.edu) for Calvin Hackathon 2026
 
-from sgp4.api import Satrec, jday
+import tlefetch, riseset
 import numpy as np
 from datetime import datetime, timezone, timedelta
 from skyfield.api import EarthSatellite, load, wgs84
@@ -125,6 +125,44 @@ def getAltAzDeg(line1, line2, dt, myLoc):
     
     return float(alt.degrees), float(az.degrees)
 
+# input str satelliteName and tuple (lat,lon) for myLoc
+# returns tuple (resultsList, t0_dt) where resultsList is
+# tuples of (minsFromT0, altDegrees) and t0_dt is a reference datetime obj
+def getTupListAltDeg(satelliteName, myLoc):
+    ts = load.timescale()
+    t0_dt = datetime.now(timezone.utc)
+    t1_dt = riseset.nextSetTime(satelliteName, myLoc)
+    TLEs = TLEsfromSatName(satelliteName)
+    satellite = EarthSatellite(TLEs[0], TLEs[1])
+    #user location
+    location = wgs84.latlon(myLoc[0], myLoc[1])
+    
+    #calculate topocentric point from satellite and location
+    difference = satellite - location
+
+    dtList = []
+    currTime = t0_dt
+    while currTime <= t1_dt:
+        dtList.append(currTime)
+        currTime += timedelta(minutes = 1)
+    
+    resultsList = []
+    for dt in dtList:
+        t = ts.from_datetime(dt)
+        topocentric = difference.at(t)
+        alt, az, distance = topocentric.altaz()
+        minsFromT0 = (dt - t0_dt).total_seconds() / 60
+        resultsList.append((float(minsFromT0), float(alt.degrees)))
+    
+    return resultsList, t0_dt
+
+# helper that takes in satName as str and returns tuple of TLEs
+def TLEsfromSatName(satelliteName):
+    satDict = tlefetch.fetch_tles("https://www.amsat.org/tle/dailytle.txt")
+    l1 = satDict.get(satelliteName)["line1"]
+    l2 = satDict.get(satelliteName)["line2"]
+    return (l1, l2)
+
 if __name__ == "__main__":
     # Example TLE (ISS)
     line1 = "1 25544U 98067A   26079.87218434  .00009590  00000-0  18573-3 0  9991"
@@ -133,9 +171,10 @@ if __name__ == "__main__":
     # print(TLEtoGeodeticSecOffset(line1, line2, 5))
     # print(TLEtoGeodeticDTSecOffset(line1, line2, datetime.now(timezone.utc), 5))
     # print(getAltAzDeg(line1, line2, datetime.now(timezone.utc), (42.9634, -85.6681)))
-    temp = (BatchTLEtoGeodeticSecOffset(line1, line2, 5, 5500))
-    for tup in temp[:50]:
-        print(tup)
-    print(len(temp))
+    # temp = (BatchTLEtoGeodeticSecOffset(line1, line2, 5, 5500))
+    # for tup in temp[:50]:
+    #     print(tup)
+    # print(len(temp))
+    print(getTupListAltDeg("AO-07", (42.9634, -85.6681)))
 
 # = datetime.now(timezone.utc)
