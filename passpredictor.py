@@ -56,7 +56,7 @@ class passPredictor:
             
 
 class satelliteData:
-    def __init__(self, name, tles, future_predictions = 6480, dt = 5):
+    def __init__(self, name, tles, future_predictions = 3000, dt = 5): #6480
         self.name = name
         self.dt = dt
         self.tle = tles

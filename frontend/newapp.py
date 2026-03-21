@@ -53,7 +53,10 @@ def main_page():
         with ui.scroll_area().classes('w-full flex-grow border p-2'):
             for key in satellite_dict.keys():
                 # Create button with default light grey color
-                btn = ui.button(key, color="grey-4").classes('w-full mb-2 text-black')
+                if key in selected_satellites:
+                    btn = ui.button(key, color="grey-9").classes('w-full mb-2 text-white')
+                else:
+                    btn = ui.button(key, color="grey-4").classes('w-full mb-2 text-black')
                 
                 # Add to our dictionary so the search bar can find it
                 satellite_ui_elements[key] = btn
@@ -66,11 +69,15 @@ def main_page():
 
     # every five seconds, update all drawn lines
     def update_cycle():
+        # clear map except for actual map layer
+        for layer in list(my_map.layers)[1:]:
+            my_map.remove_layer(layer)
+
         print("working")
         API.update_selected(list(selected_satellites))
         for sat in selected_satellites:
             path = API.get_path(sat)
-            ds.drawSatellite(my_map, path[0][0], path[0][1], path[0][2], path)
+            ds.drawSatellite(my_map, path[0][0], path[0][1], path[0][2], path, 'red')
 
 
     # main loop of webpage
@@ -79,4 +86,5 @@ def main_page():
 
 
 if __name__ in {"__main__", "__mp_main__"}:
+    markers = []
     ui.run(title="Satellite App", reload=False)
