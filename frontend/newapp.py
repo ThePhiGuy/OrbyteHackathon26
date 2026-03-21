@@ -66,7 +66,12 @@ def main_page():
 
     # every five seconds, update all drawn lines
     def update_cycle():
-        
+        print("working")
+        API.update_selected(list(selected_satellites))
+        for sat in selected_satellites:
+            path = API.get_path(sat)
+            ds.drawSatellite(my_map, path[0][0], path[0][1], path[0][2], path)
+
 
     # main loop of webpage
     ui.timer(5.0, update_cycle)

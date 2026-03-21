@@ -28,7 +28,9 @@ class passPredictor:
         self.tles = tlefetch.fetch_all_tles(self.tleSources)
         self.satellites = dict()
         for satellite in self.selected_satellites:
+            print(self.tles[satellite])
             self.satellites[satellite] = satelliteData(satellite, self.tles[satellite])
+            
     
     def update_selected(self, new_selected):
         # Find what's been added and removed
@@ -64,7 +66,7 @@ class satelliteData:
 
     def get_path(self):
         positions_list = list(self.positions)
-        curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle.line1, self.tle.line2, self.dt*self.future_predictions)
+        curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle["line1"], self.tle["line2"], self.dt*self.future_predictions)
         self.positions.popleft()
         self.positions.append(curr)
         return positions_list
@@ -83,7 +85,7 @@ class satelliteData:
     
     def predict_full_future(self):
         for i in range(0, self.future_predictions*self.dt, self.dt):
-            curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle.line1, self.tle.line2, i)
+            curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle["line1"], self.tle["line2"], i)
             self.positions.append(curr)
 
 if __name__ == "__main__":
