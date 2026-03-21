@@ -8,7 +8,7 @@ import math
 def getVisRad(heightKM, radEarthKM = 6371.0):
     # Returns: the radius on Earth's surface (in km) from which
     # a satellite at altitude h_km is visible, assuming a spherical Earth.
-    print("height")
+    print(heightKM)
     psi = math.acos(radEarthKM / (radEarthKM + heightKM))  # central angle in radians
     visRad = radEarthKM * psi                      # great-circle distance
     return visRad
