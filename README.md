@@ -9,9 +9,8 @@ built during HackTheFuture 2026 in under 24 hours.
 Features
 - Interactable list of satellites
 - Displays Satellites, their visible areas, and their flight paths
-- Calculates next visible time for any satellite
-- Graphs visibility against horizon
 - Scrollable/zoomable output map
+- Calculates next visible time for any satellite
 - Consistent update clock
 - Project written in Python
 - HTML website output
@@ -30,15 +29,21 @@ OrbyteHackathon26/
 git clone https://github.com/ThePhiGuy/OrbyteHackathon26.git
 cd OrbyteHackathon26
 
-**************
 2. Install dependencies
 npm install
 cd frontend && npm install
+
+look into commands.txt and requirements.txt
 
 Hackathon Details
 - Event: Calvin Hackathon 2026
 - Team Name: Orbyte
 - Duration: 24 hours
+
+Future/Potential Additions:
+- Graph of satellite's elevation versus horizon
+- Polar coordinate graph
+- Select specific satellite for mass info dump
 
 Team Members
 - Ryan Deaton – Backend Development
