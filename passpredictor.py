@@ -86,4 +86,4 @@ class sateliteData:
             self.positions.append(curr)
 
 if __name__ == "__main__":
-    print(getSatellites())
+    print(get_satellites())
