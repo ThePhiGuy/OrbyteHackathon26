@@ -5,6 +5,8 @@
 # TLEtoGeodetic(line1, line2, dt)
 # TLEtoGeodeticSecOffset(line1, line2, secOffset)
 # TLEtoGeodeticDTSecOffset(line1, line2, dt, secOffset)
+# BatchTLEtoGeodeticSecOffset(line1, line2, secOffset, points)
+# getAltAzDeg(line1, line2, dt, myLoc)
 # 
 # written by Joshua Rogan (jbr25@calvin.edu) for Calvin Hackathon 2026
 

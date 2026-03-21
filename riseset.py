@@ -4,6 +4,7 @@
 # 
 # riseSetTimesHoursOffset()
 # nextRiseTime()
+# nextSetTime()
 # nextPassDuration()
 # formatUTC()
 #
@@ -52,6 +53,18 @@ def nextRiseTime(satelliteName, myLocation):
     # look for event 0 (rise) and return
     return datetime.max
 
+# returns next rise time in utc format given
+# takes same params as riseSetTimesHoursOffset
+def nextSetTime(satelliteName, myLocation):
+    t, events = riseSetTimesHoursOffset(satelliteName, myLocation)
+    i = 0
+    while i < len(events):
+        if events[i] == 2:
+            return formatUTC(t[i])
+        i += 1
+    # look for event 2 (set) and return
+    return datetime.max
+
 #  returns time of pass in seconds as float
 #  takes same params as riseSetTimesHoursOffset
 def nextPassDuration(satelliteName, myLocation):
@@ -74,7 +87,9 @@ def formatUTC(utcTime):
     return utcTime.utc_strftime("%Y-%m-%d %H:%M:%S")
 
 if __name__ == "__main__":
-    t, events = riseSetTimesHoursOffset("AO-07", (42.9634, -85.6681))
+    sat = "RS-22"
+    t, events = riseSetTimesHoursOffset(sat, (42.9634, -85.6681))
     print(t, events)
-    print(nextRiseTime("AO-07", (42.9634, -85.6681)))
-    print(nextPassDuration("AO-07", (42.9634, -85.6681)))
+    print(nextRiseTime(sat, (42.9634, -85.6681)))
+    print(nextSetTime(sat, (42.9634, -85.6681)))
+    print(nextPassDuration(sat, (42.9634, -85.6681)))
