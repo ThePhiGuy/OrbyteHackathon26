@@ -54,11 +54,11 @@ def drawSatellite (my_map, lat, lon, radVisible, coords, color,
 
     marker = my_map.marker(latlng = (lat, lon))#.tooltip(name) # initialize marker
     # custom marker icon javascript
-    custom_icon_js = '''L.icon({
-    iconUrl: https://img.freepik.com/premium-psd/satellite-isolated-transparent-background_1073071-13672.jpg,
+    custom_icon_js = f'''L.icon({{
+    iconUrl: '{imageURL}',
     iconSize: [40, 40], // width and height of the icon
     iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    })'''
+    }})'''
     # apply custom marker js
     marker.run_method(':setIcon', custom_icon_js)
 
