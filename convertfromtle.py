@@ -84,8 +84,9 @@ def TLEtoGeodeticDTSecOffset(line1, line2, dt, secOffset):
 line1 = "1 25544U 98067A   26079.87218434  .00009590  00000-0  18573-3 0  9991"
 line2 = "2 25544  51.6346  17.0785 0006366 213.2716 146.7873 15.48402839558062"
 
-print(TLEtoGeodetic(line1, line2, datetime.now(timezone.utc)))
-print(TLEtoGeodeticSecOffset(line1, line2, 5))
-print(TLEtoGeodeticDTSecOffset(line1, line2, datetime.now(timezone.utc), 5))
+if __name__ == "__main__":
+    print(TLEtoGeodetic(line1, line2, datetime.now(timezone.utc)))
+    print(TLEtoGeodeticSecOffset(line1, line2, 5))
+    print(TLEtoGeodeticDTSecOffset(line1, line2, datetime.now(timezone.utc), 5))
 
 # = datetime.now(timezone.utc)
