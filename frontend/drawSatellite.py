@@ -28,7 +28,6 @@ def drawSatellite (my_map, lat, lon, radVisible, coords,
     # Calls: Current Visibility Circle around itself
 
     marker = my_map.marker(
-        location=(lat, lon),
         icon={
             'iconUrl': imageURL,
             'iconSize': [40, 40],      # width, height in pixels
