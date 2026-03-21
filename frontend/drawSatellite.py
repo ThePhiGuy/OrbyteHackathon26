@@ -38,6 +38,6 @@ def drawSatellite (lat, lon, radVisible, coords,
         }     
     )
 
-    genVisCircle(lat, lon, radVisible)
-    genFlightPath(coords)
+    drawVisCircle(lat, lon, radVisible)
+    drawFlightPath(coords)
     return marker
