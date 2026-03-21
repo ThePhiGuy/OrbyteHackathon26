@@ -13,6 +13,16 @@ def fetch_tles(url):
     data = response.text.strip().splitlines()
     satelites = dict()
 
+    # goes by threes and skips the final two.
+    for i in range(0, len(data) - 2, 3):
+        name  = data[i].strip()
+        line1 = data[i + 1].strip()
+        line2 = data[i + 2].strip()
+        satelites[name] = {
+            "line1": line1,
+            "line2": line2
+        }
+
     return satelites
 
 
