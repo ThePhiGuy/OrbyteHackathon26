@@ -7,6 +7,8 @@
 # nextSetTime()
 # nextPassDuration()
 # formatUTC()
+# hoursMinsSecs()
+# nextRiseTimeHMS()
 #
 #  written by Joshua Rogan (jbr25@calvin.edu) for Calvin Hackathon 2026
 
@@ -15,13 +17,16 @@ import convertfromtle, tlefetch
 from datetime import datetime, timezone, timedelta
 from skyfield.api import EarthSatellite, load, wgs84
 
+satDict = tlefetch.fetch_tles("https://www.amsat.org/tle/dailytle.txt")
+
 # primarily helper for 
 # myLocation should be tuple of lat and lon
 # satelliteName should be from amsat linked below
 # hrs (int) for offset from current time, default is 24
 # outputs tuple of list of utcTimes and list of events
+
 def riseSetTimesHoursOffset(satelliteName, myLocation, hrs = 24):
-    satDict = tlefetch.fetch_tles("https://www.amsat.org/tle/dailytle.txt")
+    # satDict = tlefetch.fetch_tles("https://www.amsat.org/tle/dailytle.txt")
 
     l1 = satDict.get(satelliteName)["line1"]
     l2 = satDict.get(satelliteName)["line2"]
@@ -97,9 +102,10 @@ def nextRiseTimeHMS(satelliteName, myLocation):
 
 if __name__ == "__main__":
     sat = "RS-22"
-    t, events = riseSetTimesHoursOffset(sat, (42.9634, -85.6681))
+    # t, events = riseSetTimesHoursOffset(sat, (42.9634, -85.6681))
     # print(t, events)
-    print(nextRiseTime(sat, (42.9634, -85.6681)))
-    print(nextSetTime(sat, (42.9634, -85.6681)))
-    print(nextPassDuration(sat, (42.9634, -85.6681)))
-    print(nextRiseTimeHMS(sat, (42.9634, -85.6681)))
+    # print(nextRiseTime(sat, (42.9634, -85.6681)))
+    # print(nextSetTime(sat, (42.9634, -85.6681)))
+    # print(nextPassDuration(sat, (42.9634, -85.6681)))
+    for satellite in satDict:
+        print(satellite, nextRiseTimeHMS(satellite, (42.9634, -85.6681)))
