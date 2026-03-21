@@ -9,13 +9,12 @@ from nicegui import ui
 def drawVisCircle(my_map, lat, lon, radVis) :
     # Goal: Display the Area of where the given Satellite could be Seen Currently with a Circle
     # Parameters: Latitude, Longitude, Radian of Visible Area Currently
-    visCirc = ui.leaflet(center=(lat, lon)).classes('h-32')
+    visCirc = my_map.leaflet(center=(lat, lon)).classes('h-32')
     visCirc.generic_layer(name='satellites', args=[m.center, {'color': 'yellow', 'radius': radVis}])
 
 def drawFlightPath(my_map, coords) :
     # Goal: To draw the pre-calculated future flightpath the satellite using a polyline
     # Parameters: coords - a List of tuples [lat, lon]
-    path = my_map.generic_layer(name='polyline', args=[path_history, {'color': 'red', 'weight': 3}])
     my_map.generic_layer(
     name = 'polyline', 
     args = [coords, {'color': 'red', 'weight': 4, 'opacity': 0.8}]
