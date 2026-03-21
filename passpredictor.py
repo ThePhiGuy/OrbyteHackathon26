@@ -49,7 +49,7 @@ class passPredictor:
         self.selected_satelites = new_selected
         
     def get_path(self, satelite):
-        return self.satelites[satelite].get_path()
+        return self.satelites[satelite].get_path() # this is a list of tuples of (lat, long, alt)
             
 
 class sateliteData:
@@ -76,7 +76,7 @@ class sateliteData:
     
     def set_tle(self, tle):
         self.tle = tle
-        self.positions() = dict()
+        self.positions = dict()
         self.predict_full_future()
         return
     
