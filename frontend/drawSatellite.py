@@ -6,15 +6,15 @@
 
 from nicegui import ui
 
-def drawVisCircle(my_map, lat, lon, radVis) :
+def drawVisCircle(my_map, lat, lon, radVis, color) :
     # Goal: Display the Area of where the given Satellite could be Seen Currently with a Circle
     # Parameters: Latitude, Longitude, Radian of Visible Area Currently
     my_map.generic_layer(
         name='circle', 
-        args=[[lat, lon], {'color': 'red', 'radius': radVis}]
+        args=[[lat, lon], {'color': color, 'radius': radVis}]
     )
     
-def drawFlightPath(my_map, coords, line_color):
+def drawFlightPath(my_map, coords, color):
     # Goal: To draw the pre-calculated future flightpath the satellite using a polyline
     # Parameters: coords - a List of tuples/lists [lat, lon]
     
@@ -42,10 +42,10 @@ def drawFlightPath(my_map, coords, line_color):
         if len(segment) > 1: # Only draw if there are enough points to make a line
             my_map.generic_layer(
                 name='polyline', 
-                args=[segment, {'color': 'red', 'weight': 4, 'opacity': 0.8}]
+                args=[segment, {'color': color, 'weight': 4, 'opacity': 0.8}]
             )
 
-def drawSatellite (my_map, lat, lon, radVisible, coords, line_color,
+def drawSatellite (my_map, lat, lon, radVisible, coords, color,
              imageURL= "https://img.freepik.com/premium-psd/satellite-isolated-transparent-background_1073071-13672.jpg") :
     # Goal: Generate map marker object and return it for future changes
     # Parameters: Latitude, Longitude, Radian of Visible Area Currently, Flightpath Coordinates, Icon Image URL
@@ -62,6 +62,6 @@ def drawSatellite (my_map, lat, lon, radVisible, coords, line_color,
     # apply custom marker js
     marker.run_method(':setIcon', custom_icon_js)
 
-    drawVisCircle(my_map, lat, lon, radVisible)
-    drawFlightPath(my_map, coords, line_color)
+    drawVisCircle(my_map, lat, lon, radVisible, color)
+    drawFlightPath(my_map, coords, color)
     return marker
