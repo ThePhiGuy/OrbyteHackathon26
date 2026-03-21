@@ -1,5 +1,6 @@
 from nicegui import ui
 import random
+import genIcon
 
 # Keep track of where the satellite has been
 path_history = [[20, 0]]
