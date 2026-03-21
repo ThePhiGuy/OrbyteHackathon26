@@ -7,3 +7,8 @@ git add ./requirements.txt
 activating the python venv:
 
 source .venv/bin/activate
+
+
+if python libraries are missing:
+
+pip install -r requirements.txt
