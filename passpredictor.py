@@ -21,20 +21,38 @@ class passPredictor:
     def __init__(self, selected_satelites):
         self.tleSources = ["https://www.amsat.org/tle/dailytle.txt"]
         self.update_tles()
-        self.selected_satelites
+        self.selected_satelites = selected_satelites
         
     def update_tles(self):
         self.tles = tlefetch.fetch_all_tles(self.tleSources)
         self.satelites = dict()
-        for satelite in selected_satelites:
+        for satelite in self.selected_satelites:
             self.satelites[satelite] = sateliteData(satelite, self.tles[satelite])
     
-    def update_selected(self):
+    def update_selected(self, new_selected):
+        # Find what's been added and removed
+        current = set(self.selected_satelites)
+        updated = set(new_selected)
+
+        added   = updated - current
+        removed = current - updated
+
+        # Remove deselected satellites
+        for satelite in removed:
+            del self.satelites[satelite]
+
+        # Add newly selected satellites
+        for satelite in added:
+            self.satelites[satelite] = sateliteData(satelite, self.tles[satelite])
+
+        # Update the selected list
+        self.selected_satelites = new_selected
         
+
             
 
 class sateliteData:
-    def __init__(self, name, tles, future_predictions = 64800, dt = 5):
+    def __init__(self, name, tles, future_predictions = 6480, dt = 5):
         self.name = name
         self.dt = dt
         self.tle = tles
