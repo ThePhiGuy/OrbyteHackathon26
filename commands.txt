@@ -1,0 +1,9 @@
+after a pip install:
+
+pip freeze > requirements.txt
+git add ./requirements.txt
+
+
+activating the python venv:
+
+source .venv/bin/activate
