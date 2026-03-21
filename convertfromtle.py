@@ -1,5 +1,5 @@
 # convertfromtle.py provides the ability to take in TLEs of satellites and 
-# convert them to ECI, then to Geodetic (cartesian lat/long and alt)
+# convert them to geodetic (actually geocentric) coords (lat/long and alt)
 # 
 # methods:
 # TLEtoGeodetic(line1, line2, dt)
@@ -7,6 +7,8 @@
 # TLEtoGeodeticDTSecOffset(line1, line2, dt, secOffset)
 # BatchTLEtoGeodeticSecOffset(line1, line2, secOffset, points)
 # getAltAzDeg(line1, line2, dt, myLoc)
+# getTupListAltDeg(satelliteName, myLoc)
+# TLEsfromSatName(satelliteName)
 # 
 # written by Joshua Rogan (jbr25@calvin.edu) for Calvin Hackathon 2026
 

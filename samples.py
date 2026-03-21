@@ -1,4 +1,4 @@
-# document for methods that simulate functionality of future methods (to support frontend work)
+# testing document for methods that simulate functionality of future methods (to support frontend work)
 # written by Joshua Rogan (jbr25@calvin.edu) for Calvin Hackathon 2026
 
 import convertfromtle
