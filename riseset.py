@@ -41,7 +41,7 @@ def riseSetTimesHoursOffset(satelliteName, myLocation, hrs = 24):
 
     return t, events
 
-# returns next rise time in utc format given
+# returns next rise time in utc datetime format
 # takes same params as riseSetTimesHoursOffset
 def nextRiseTime(satelliteName, myLocation):
     t, events = riseSetTimesHoursOffset(satelliteName, myLocation)
@@ -53,7 +53,7 @@ def nextRiseTime(satelliteName, myLocation):
     # look for event 0 (rise) and return
     return datetime.max
 
-# returns next rise time in utc format given
+# returns next rise time in utc datetime format
 # takes same params as riseSetTimesHoursOffset
 def nextSetTime(satelliteName, myLocation):
     t, events = riseSetTimesHoursOffset(satelliteName, myLocation)
@@ -86,10 +86,20 @@ def nextPassDuration(satelliteName, myLocation):
 def formatUTC(time):
     return time.utc_strftime("%Y-%m-%d %H:%M:%S")
 
+# helper to convert utc to string "hours, minutes, seconds"
+def hoursMinsSecs(utcDateTime):
+    return(f"{utcDateTime.hour}, {utcDateTime.minute}, {utcDateTime.second}")
+
+# function using nextRiseTime to calculate risetime and returns in HMS string
+def nextRiseTimeHMS(satelliteName, myLocation):
+    t = nextRiseTime(satelliteName, myLocation)
+    return hoursMinsSecs(t)
+
 if __name__ == "__main__":
     sat = "RS-22"
     t, events = riseSetTimesHoursOffset(sat, (42.9634, -85.6681))
-    print(t, events)
+    # print(t, events)
     print(nextRiseTime(sat, (42.9634, -85.6681)))
     print(nextSetTime(sat, (42.9634, -85.6681)))
     print(nextPassDuration(sat, (42.9634, -85.6681)))
+    print(nextRiseTimeHMS(sat, (42.9634, -85.6681)))
