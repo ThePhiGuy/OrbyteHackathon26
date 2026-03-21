@@ -131,7 +131,7 @@ if __name__ == "__main__":
     # print(TLEtoGeodeticSecOffset(line1, line2, 5))
     # print(TLEtoGeodeticDTSecOffset(line1, line2, datetime.now(timezone.utc), 5))
     # print(getAltAzDeg(line1, line2, datetime.now(timezone.utc), (42.9634, -85.6681)))
-    temp = (BatchTLEtoGeodeticSecOffset(line1, line2, 5, 64800))
+    temp = (BatchTLEtoGeodeticSecOffset(line1, line2, 5, 5500))
     for tup in temp[:50]:
         print(tup)
     print(len(temp))
