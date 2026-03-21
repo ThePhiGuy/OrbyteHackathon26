@@ -1,16 +1,22 @@
 Goals for final project:
 - Satellites plotted onto a map
-    - Cartesian based Map
-    - Map is Zoomable and Scrollable
-    - 5 Second Maps
-- List of all Satellites
-    - Selectable/Deslectable Satellites
-    - Updates during Map redraws
-- Draws Satellite Flight Paths
-- Visibility of Satellites
-    - Draws a Circle of the area of Visibility
-    - Can Calculate the next Visible time at Your Location
-        - Takes in User Inputted Location
+    - Cartesian based map
+    - Map is zoomable and scrollable
+    - 5 second maps
+- List of all satellites
+    - Selectable/deslectable satellites
+    - Updates during map redraws
+- Draws current satellite traits:
+    - Current Location Marker
+        - Tells which satellite when clicked
+    - Visibility of satellites
+        - Draws a circle of the current area of visibility
+        - Can Calculate the next visible time at Your Location
+            - Takes in user inputted location
+    - Expected flight paths
+        - All Color Coded for Readability
+- Graph Display of Realtime Visibility
+    - Plots the satellite's elevation against the horizon
 
 Maybes:
 - Flightpaths showing error potential when selected

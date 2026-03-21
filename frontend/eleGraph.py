@@ -18,7 +18,7 @@ def update_graph (time_alt) :
 
             # Creation and naming of axes
             axes = fig.gca()
-            axes.set_title('Satellite Elevation Over Time')
+            axes.set_title('Visible Satellite Elevation Over Time')
             axes.set_xlabel('Time')
             axes.set_ylabel('Elevation (degrees)')
 
