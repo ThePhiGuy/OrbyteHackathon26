@@ -79,7 +79,8 @@ class satelliteData:
     
     def set_tle(self, tle):
         self.tle = tle
-        self.positions = dict()
+        # self.positions = dict() we prob want deque here
+        self.positions = deque()
         self.predict_full_future()
         return
     
@@ -87,7 +88,37 @@ class satelliteData:
         # for i in range(0, self.future_predictions, self.dt):
         #     curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle["line1"], self.tle["line2"], i)
         #     self.positions.append(curr)
-        self.positions + convertfromtle.BatchTLEtoGeodeticSecOffset(self.tle["line1"], self.tle["line2"], 5, 6480)
+        self.positions.extend(convertfromtle.BatchTLEtoGeodeticSecOffset(self.tle["line1"], self.tle["line2"], self.dt, self.future_predictions))
 
 if __name__ == "__main__":
-    print(get_satellites())
+    # print(get_satellites())
+
+    # Get TLEs
+    tles = tlefetch.fetch_tles("https://www.amsat.org/tle/dailytle.txt")
+
+    # Pick a satellite (make sure name exists!)
+    sat_name = list(tles.keys())[0]  # first satellite
+    sat_tle = tles[sat_name]
+
+    print("Testing satellite:", sat_name)
+
+    # Create object (this runs predict_full_future automatically)
+    sat = satelliteData(sat_name, sat_tle)
+
+    # Check results
+    # print("Number of positions:", len(sat.positions))
+    # print("First 5 positions:")
+    # for p in list(sat.positions)[:5]:
+    #     print(p)
+
+    # First call
+    path1 = sat.get_path()
+    print("Length of path:", len(path1))
+    print("First 3 points:", path1[:3])
+
+    # Second call (should shift)
+    path2 = sat.get_path()
+
+    print("\nAfter second call:")
+    print("First element changed:", path1[0] != path2[0])
+    print("Last element changed:", path1[-1] != path2[-1])
