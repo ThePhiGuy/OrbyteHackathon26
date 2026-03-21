@@ -1,7 +1,6 @@
 from nicegui import ui
 import random
-import frontend.drawSatellite as drawSat
-import frontend.getRadVisibility as getRadVisi
+import drawSatellite as drawSat
 
 # Keep track of where the satellite has been
 path_history = [[20, 0]]
