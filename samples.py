@@ -1,3 +1,6 @@
+# document for methods that simulate functionality of future methods (to support frontend work)
+# written by Joshua Rogan (jbr25@calvin.edu) for Calvin Hackathon 2026
+
 import convertfromtle
 
 ISSline1 = "1 25544U 98067A   26079.87218434  .00009590  00000-0  18573-3 0  9991"
