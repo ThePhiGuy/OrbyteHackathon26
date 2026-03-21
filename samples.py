@@ -11,3 +11,6 @@ def sampleDataList():
     for i in range(0, 6480):
         list.append(convertfromtle.TLEtoGeodeticSecOffset(ISSline1, ISSline2, i*5))
     return list
+
+if __name__ == "__main__":
+    print(sampleDataList())
