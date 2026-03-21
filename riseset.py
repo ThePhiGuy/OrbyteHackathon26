@@ -100,6 +100,12 @@ def nextRiseTimeHM(satelliteName, myLocation):
     t = nextRiseTime(satelliteName, myLocation)
     return hoursMins(t)
 
+def nextRiseTimeDict(myLocation):
+    dictionary = dict()
+    for sat in satDict:
+        dictionary[sat] = nextRiseTimeHM(sat, myLocation)
+    return dictionary
+
 if __name__ == "__main__":
     sat = "RS-22"
     # t, events = riseSetTimesHoursOffset(sat, (42.9634, -85.6681))
@@ -107,5 +113,6 @@ if __name__ == "__main__":
     # print(nextRiseTime(sat, (42.9634, -85.6681)))
     # print(nextSetTime(sat, (42.9634, -85.6681)))
     # print(nextPassDuration(sat, (42.9634, -85.6681)))
-    for satellite in satDict:
-        print(satellite, nextRiseTimeHM(satellite, (42.9634, -85.6681)))
+    # for satellite in satDict:
+        # print(satellite, nextRiseTimeHM(satellite, (42.9634, -85.6681)))
+    print(nextRiseTimeDict((42.9634, -85.6681)))
