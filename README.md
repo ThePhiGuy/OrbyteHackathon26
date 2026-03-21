@@ -7,26 +7,30 @@ Built during HackTheFuture 2026 in under 24 hours.
 
 **************
 Features
-- Tracks satellite flight paths
+- Interactable list of satellites
+- Displays Satellites, their visible areas, and their flight paths
 - Calculates next visible time for any satellite
-- 
-- Zoomable/Scrollable output map
+- Graphs visibility against horizon
+- Scrollable/zoomable output map
+- Consistent update clock
 - Project written in Python
+- HTML website output
+- NiceGUI driven frontend
 - Data pilled from TLEData (Two Line Elements)
 
 **************
 Project Structure:
 OrbyteHackathon26/
-│── frontend/         # React Native app
+│── frontend/         # NiceGUI + Leaflet UI
 │── backend/          # Node.js API
-│── model/            # Trained AI model files
+│── dependencies/     # All files pertaining to imports
 │── README.md
-│── package.json
 
 1. Clone the repo:
 git clone https://github.com/ThePhiGuy/OrbyteHackathon26.git
 cd OrbyteHackathon26
 
+**************
 2. Install dependencies
 npm install
 cd frontend && npm install
@@ -35,12 +39,6 @@ Hackathon Details
 - Event: Calvin Hackathon 2026
 - Team Name: Orbyte
 - Duration: 24 hours
-
-**************
-Possible Future Improvements
-- Add offline detection mode
-- Expand to industrial waste sorting
-- Integrate with local recycling centers
 
 Team Members
 - Ryan Deaton – Backend Development
