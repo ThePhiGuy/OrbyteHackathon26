@@ -124,3 +124,14 @@ def main_page():
 if __name__ in {"__main__", "__mp_main__"}:
     markers = []
     ui.run(title="Satellite App", reload=False)
+
+
+
+
+import random
+
+def randomRGB() :
+    r = random.randint(0, 255)
+    g = random.randint(0, 255)
+    b = random.randint(0, 255)
+    return f"rgb({r}, {g}, {b})"

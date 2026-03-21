@@ -1,4 +1,5 @@
-# eleGraph.py updates the graph of
+# eleGraph.py updates the graph of the Visibility from current location
+# The graph will map the 
 #
 # written by Ty Veldhouse (tpv8@calvin.edu) for Calvin Hackathon '26 on March 2026
 
