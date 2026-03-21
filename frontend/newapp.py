@@ -5,6 +5,7 @@ import drawSatellite as ds
 import getRadVisibility as grv
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import passpredictor
+import riseset
 
 # API object
 API = passpredictor.passPredictor(())
@@ -15,6 +16,9 @@ my_list = passpredictor.get_satellites()
 satellite_dict = {item: None for item in my_list} # set dict to have the sat names as keys
 # list of selected satellites to show on map
 selected_satellites = set()
+# satellite times
+satellite_labels = {}
+
 cycle_counter = 59
 force_update = False
 user_marker = None
@@ -26,10 +30,10 @@ def main_page():
 
     # filter satellites
     def filter_satellites(e):
-        # e.value gets the text typed into the input
         search_term = e.value.lower()
-        for name, button in satellite_ui_elements.items():
-            button.set_visibility(search_term in name.lower())
+        #This now toggles the visibility of the ENTIRE row, collapsing the empty space
+        for name, row_container in satellite_ui_elements.items():
+            row_container.set_visibility(search_term in name.lower())
     
     # select satellite
     def select_satellite(sat_name, btn_object):
@@ -49,27 +53,89 @@ def main_page():
         # Popup for tracking
         #ui.notify(f'Tracking: {list(selected_satellites)}')
 
+    # update satellite time labels
+    def update_countdown_times():
+        # This will run every second
+        for sat_name, label in satellite_labels.items():
+            time_left = 0
+            
+            label.set_text(time_left)
+
+    # Sidebar sort function
+    def sort_satellites(e):
+        sort_method = e.value
+        
+        # Get the current list of satellite names
+        sat_names = list(satellite_ui_elements.keys())
+        
+        if sort_method == "Alphabetical":
+            sat_names.sort(key=str.lower)
+            
+        elif sort_method == "Acquisition of Signal":
+            # Helper function to turn "MM:SS" or "HH:MM:SS" into pure seconds for sorting
+            def get_seconds(name):
+                time_text = satellite_labels[name].text
+                if time_text == '--:--' or not time_text:
+                    return float('inf') # Push invalid/empty times to the very bottom
+                
+                try:
+                    parts = time_text.split(':')
+                    if len(parts) == 2:
+                        return int(parts[0]) * 60 + int(parts[1])
+                    elif len(parts) == 3:
+                        return int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
+                except ValueError:
+                    pass
+                return float('inf')
+                
+            sat_names.sort(key=get_seconds)
+            
+        else:
+            # "Unsorted" - fallback to the original dictionary order
+            sat_names = list(satellite_dict.keys())
+            
+        # Reorder the UI elements by moving them inside the list container
+        for i, name in enumerate(sat_names):
+            satellite_ui_elements[name].move(list_container, i)
+
     # Sidebar 
     with ui.left_drawer(value=True).classes('bg-gray-100 p-4 flex flex-col'):
         
         # 2. Search Bar
         ui.input('Search satellites...', on_change=filter_satellites).classes('w-full mb-4')
-        # 3. Sorting dropdown menu
-        select1 = ui.select(["Unsorted", "Alphabetical", "Acquisition of Signal"], value="Unsorted").classes('w-full mb-4')
+        
+        # 3. Sorting dropdown menu - NOW WIRED UP!
+        select1 = ui.select(
+            ["Unsorted", "Alphabetical", "Acquisition of Signal"], 
+            value="Unsorted", 
+            on_change=sort_satellites
+        ).classes('w-full mb-4')
+        
         # The scroll area for the buttons
         with ui.scroll_area().classes('w-full flex-grow border p-2'):
-            for key in satellite_dict.keys():
-                # Create button with default light grey color
-                if key in selected_satellites:
-                    btn = ui.button(key, color="grey-9").classes('w-full mb-2 text-white')
-                else:
-                    btn = ui.button(key, color="grey-4").classes('w-full mb-2 text-black')
-                
-                # Add to our dictionary so the search bar can find it
-                satellite_ui_elements[key] = btn
-                
-                # lock in 'key' and 'btn' for this specific loop iteration
-                btn.on_click(lambda e, k=key, b=btn: select_satellite(k, b))
+            
+            # EXTRA: We need a specific container inside the scroll area to shuffle items around in
+            list_container = ui.column().classes('w-full gap-0')
+            
+            with list_container:
+                for key in satellite_dict.keys():
+                    
+                    row = ui.row().classes('w-full items-center justify-between mb-2 gap-2 flex-nowrap')
+                    
+                    with row:
+                        if key in selected_satellites:
+                            btn = ui.button(key, color="grey-9").classes('flex-1 text-white truncate')
+                        else:
+                            btn = ui.button(key, color="grey-4").classes('flex-1 text-black truncate')
+                        
+                        time_label = ui.label('--:--').classes('text-sm text-gray-600 w-12 text-right font-mono')
+                    
+                    satellite_ui_elements[key] = row
+                    satellite_labels[key] = time_label
+                    
+                    btn.on_click(lambda e, k=key, b=btn: select_satellite(k, b))
+
+
     
     # User location marker
     def submit_location():
@@ -163,6 +229,7 @@ def main_page():
     def update_cycle():
         global cycle_counter
         global force_update
+        update_countdown_times()
         cycle_counter+=1
 
         print("working")
@@ -195,6 +262,8 @@ def main_page():
 
     # main loop of webpage
     ui.timer(1.0, update_cycle)
+
+    
 
 
 
