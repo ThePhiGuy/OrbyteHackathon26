@@ -1,32 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <meta charset="utf-8" />
+    <title>Map Example</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
-<div id="map" style="height:100vh;"></div>
+    <div id="map" style="width: 100%; height: 100%;"></div>
+    <script>
+        // Initialize map
+        var map = L.map('map').setView([20, 0], 2);
 
-<script>
-var map = L.map('map').setView([20, 0], 2);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
-  .addTo(map);
-
-var satellites = {};
-
-function updateSatellites(data) {
-    data.forEach(sat => {
-        if (satellites[sat.name]) {
-            satellites[sat.name].setLatLng([sat.lat, sat.lon]);
-        } else {
-            satellites[sat.name] = L.marker([sat.lat, sat.lon])
-                .addTo(map)
-                .bindPopup(sat.name);
-        }
-    });
-}
-</script>
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+    </script>
 </body>
 </html>

@@ -1,37 +1,46 @@
-import sys, requests
-from PyQt6.QtWidgets import QApplication, QMainWindow
-from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtCore import QTimer
+from nicegui import ui
+import random
 
-API_URL = "http://localhost:5000/satellites"  # your API
+# Keep track of where the satellite has been
+path_history = [[20, 0]]
 
-class App(QMainWindow):
-    def __init__(self):
-        super().__init__()
+@ui.page('/')
+def main_page():
+    
+    # 1. Sidebar
+    with ui.left_drawer(value=True).classes('bg-gray-100 p-4'):
+        ui.label('Satellite Tracker').classes('text-xl font-bold mb-4')
+        coord_label = ui.label('Waiting for data...')
 
-        self.view = QWebEngineView()
-        self.view.load("map.html")
+    # 2. Map & Starting Marker
+    my_map = ui.leaflet(center=(20, 0), zoom=2).classes('w-full h-screen')
+    sat_marker = my_map.marker(latlng=(20, 0))
+    
+    # 3. Create the Polyline (The Path)
+    # We pass the history list, plus standard Leaflet styling options
+    sat_path = my_map.generic_layer(name='polyline', args=[path_history, {'color': 'red', 'weight': 3}])
 
-        self.setCentralWidget(self.view)
-        self.setWindowTitle("Satellite Tracker")
+    # 4. Update Function
+    def update_satellite():
+        # Get the last known coordinate and move slightly from there
+        last_lat, last_lon = path_history[-1]
+        new_lat = last_lat + random.uniform(-5, 5)
+        new_lon = last_lon + random.uniform(-5, 5)
+        
+        # Move the physical marker
+        sat_marker.move(new_lat, new_lon)
+        
+        # Add the new coordinate to our history list
+        path_history.append([new_lat, new_lon])
+        
+        # Push the updated history list directly to Leaflet to extend the line!
+        sat_path.run_layer_method('setLatLngs', path_history)
+        
+        # Update the UI text
+        coord_label.set_text(f'Lat: {new_lat:.2f}, Lon: {new_lon:.2f}')
 
-        # update every 5 seconds
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update_data)
-        self.timer.start(5000)
+    ui.timer(2.0, update_satellite)
 
-    def update_data(self):
-        try:
-            data = requests.get(API_URL).json()
-
-            js = f"updateSatellites({data});"
-            self.view.page().runJavaScript(js)
-
-        except Exception as e:
-            print("API error:", e)
-
-
-app = QApplication(sys.argv)
-window = App()
-window.showMaximized()  # fullscreen-ish
-app.exec()
+if __name__ in {"__main__", "__mp_main__"}:
+    # As long as PyQt6 is installed, this will open in a native app window!
+    ui.run(title="Satellite App", reload=False)
