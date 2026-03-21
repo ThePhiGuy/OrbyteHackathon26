@@ -1,0 +1,12 @@
+Goals for final project:
+- Satellites plotted onto a map
+    - Cartesian based Map
+    - Map is Zoomable and Scrollable
+    - 5 Second Maps
+- List of all Satellites
+    - Selectable/Deslectable Satellites
+    - Updates during Map redraws
+-
+
+Maybes:
+- 
