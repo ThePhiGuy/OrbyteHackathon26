@@ -8,6 +8,15 @@ import tlefetch
 import convertfromtle
 from collections import deque
 
+
+def getSatellites():
+    sats = []
+    sources = ["https://www.amsat.org/tle/dailytle.txt"]
+    tles = tlefetch.fetch_all_tles(sources)
+    for satellite in tles:
+        sats.append(satellite)
+    return sats
+
 class passPredictor:
     def __init__(self, selected_satelites):
         self.tleSources = ["https://www.amsat.org/tle/dailytle.txt"]
@@ -16,7 +25,6 @@ class passPredictor:
         for satelite in selected_satelites:
             self.satelites[satelite] = sateliteData(satelite, self.tles[satelite])
     # def update_tle(self):
-    def predict_passes(self)
             
 
 class sateliteData:
@@ -51,3 +59,4 @@ class sateliteData:
         for i in range(0, self.future_predictions*self.dt, self.dt):
             curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle.line1, self.tle.line2, i)
             self.positions.append(curr)
+
