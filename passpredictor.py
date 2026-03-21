@@ -13,18 +13,25 @@ class passPredictor:
         self.tleSources = ["https://www.amsat.org/tle/dailytle.txt"]
         self.tles = tlefetch.fetch_all_tles(self.tleSources)
         self.satelites = dict()
-        for satelite in selected_satelites:
-            self.satelites[satelite] = sateliteData(satelite, )
     # def update_tle(self):
-
     def predict_pass(self, satelite, dt = 5, future_predictions = 64800):
-        line1 = self.tles[satelite]
-        def ECItoGeodetic(line1, line2):
+        self.tles[satelite]
             
 
 class sateliteData:
-    def __init__(self, name):
+    def __init__(self, name, future_predictions = 64800, dt = 5, tles):
         self.name = name
-        self.positions =
-    def get_current_position():
+        self.dt = dt
+        self.future_predictions = future_predictions
+        self.positions = deque([])
+        self.predict_full_future()
+
+    def get_current_position(self):
         
+    def get_path():
+
+    def get_dt(self):
+        return self.dt
+    
+    def predict_full_future(self):
+        self.positions.append()

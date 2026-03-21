@@ -36,6 +36,7 @@ def fetch_all_tles(urls):
         # not within, the right side of this equation overrites existing
     return sats
 
+
 # for testing purposes
 if __name__ == "__main__":
     amsat = "https://www.amsat.org/tle/dailytle.txt"
