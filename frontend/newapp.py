@@ -58,12 +58,13 @@ def main_page():
         # This will run every second
         for sat_name, label in satellite_labels.items():
             try:
-                loc = user_marker.props.get('latlng')
-                print(loc)
-                time_left = riseset.nextRiseTime(sat_name, loc)
+                #loc = user_marker.props.get('latlng')
+                #print("it works")
+                time_left = riseset.nextRiseTimeHM(sat_name, (0, 0))
                 
                 label.set_text(time_left)
             except:
+                print("fail")
                 continue
 
     # Sidebar sort function
@@ -234,7 +235,6 @@ def main_page():
     def update_cycle():
         global cycle_counter
         global force_update
-        update_countdown_times()
         cycle_counter+=1
 
         print("working")
@@ -252,6 +252,8 @@ def main_page():
             force_update = False
             
         if (cycle_counter % 60 == 0):
+            # update countdowns every minute
+            update_countdown_times()
             # clear map except for actual map layer
             for layer in list(my_map.layers)[1:]:
                 if layer != user_marker:
