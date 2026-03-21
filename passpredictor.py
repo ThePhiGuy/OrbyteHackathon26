@@ -84,7 +84,7 @@ class satelliteData:
         return
     
     def predict_full_future(self):
-        for i in range(0, self.future_predictions*self.dt, self.dt):
+        for i in range(0, self.future_predictions, self.dt):
             curr = convertfromtle.TLEtoGeodeticSecOffset(self.tle["line1"], self.tle["line2"], i)
             self.positions.append(curr)
 

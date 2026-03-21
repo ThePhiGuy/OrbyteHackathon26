@@ -9,8 +9,10 @@ from nicegui import ui
 def drawVisCircle(my_map, lat, lon, radVis) :
     # Goal: Display the Area of where the given Satellite could be Seen Currently with a Circle
     # Parameters: Latitude, Longitude, Radian of Visible Area Currently
-    visCirc = my_map.leaflet(center=(lat, lon)).classes('h-32')
-    visCirc.generic_layer(name='satellites', args=[visCirc.center, {'color': 'yellow', 'radius': radVis}])
+    my_map.generic_layer(
+        name='circle', 
+        args=[[lat, lon], {'color': 'red', 'radius': radVis}]
+    )
 
 def drawFlightPath(my_map, coords) :
     # Goal: To draw the pre-calculated future flightpath the satellite using a polyline
@@ -27,13 +29,15 @@ def drawSatellite (my_map, lat, lon, radVisible, coords,
     # Returns: Marker object
     # Calls: Current Visibility Circle around itself
 
-    marker = my_map.marker(
-        icon={
-            'iconUrl': imageURL,
-            'iconSize': [40, 40],      # width, height in pixels
-            'iconAnchor': [lat, lon],    # where the "point" of the marker is
-        }     
-    )
+    marker = my_map.marker(latlng = (lat, lon)) # initialize marker
+    # custom marker icon javascript
+    custom_icon_js = '''L.icon({
+    iconUrl: imageURL,
+    iconSize: [40, 40], // width and height of the icon
+    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+    })'''
+    # apply custom marker js
+    marker.run_method(':setIcon', custom_icon_js)
 
     drawVisCircle(my_map, lat, lon, radVisible)
     drawFlightPath(my_map, coords)
