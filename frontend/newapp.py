@@ -2,6 +2,7 @@ from nicegui import ui
 import os 
 import sys
 import drawSatellite as ds
+import asyncio
 import getRadVisibility as grv
 from datetime import datetime, timezone, timedelta
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -41,20 +42,23 @@ def main_page():
     # select satellite
     def select_satellite(sat_name, btn_object):
         global force_update
+        
         # deselect if selected
         if sat_name in selected_satellites:
             selected_satellites.remove(sat_name)
             btn_object.props('color=grey-4') # Back to light grey
-            btn_object.classes(replace='w-full mb-2 text-black') # change text color for readability
+            # Specifically remove white, add black. Leave size alone!
+            btn_object.classes(remove='text-white', add='text-black') 
+            
         # If it's not selected, select it
         else:
             selected_satellites.add(sat_name) 
             btn_object.props('color=grey-9') # Turn dark grey
-            btn_object.classes(replace='w-full mb-2 text-white') # change text color for readability
+            # Specifically remove black, add white. Leave size alone!
+            btn_object.classes(remove='text-black', add='text-white') 
+            
         force_update = True
         print(force_update)
-        # Popup for tracking
-        #ui.notify(f'Tracking: {list(selected_satellites)}')
 
     # update satellite time labels
     def get_countdown_string(target_time_str):
@@ -83,24 +87,6 @@ def main_page():
         return str(f"{hours:02d}:{minutes:02d}")
 
 
-    def update_countdown_times():
-        global user_loc
-        global satellite_labels
-        # This will run every 60 seconds
-        rise_times = riseset.nextRiseTimeDict(user_loc)
-        #current_utc_time = datetime.now(timezone.utc)
-        for sat_name, label in satellite_labels.items():
-            try:
-                #loc = user_marker.props.get('latlng')
-                #print("it works")
-                sat_utc_arrival_string = rise_times[sat_name]
-                #print(get_countdown_string(sat_utc_arrival_string))
-                time_left = get_countdown_string(sat_utc_arrival_string)
-    
-                label.text = f"{time_left}"
-            except:
-                print("fail")
-                continue
 
     # Sidebar sort function
     def sort_satellites(e):
@@ -130,6 +116,11 @@ def main_page():
                 return float('inf')
                 
             sat_names.sort(key=get_seconds)
+
+        elif sort_method == "Selected First":
+            # Sorts by selected status first (selected items go to the top), 
+            # and then alphabetically for a clean look
+            sat_names.sort(key=lambda name: (name not in selected_satellites, name.lower()))
             
         else:
             # "Unsorted" - fallback to the original dictionary order
@@ -147,7 +138,7 @@ def main_page():
         
         # 3. Sorting dropdown menu - NOW WIRED UP!
         select1 = ui.select(
-            ["Unsorted", "Alphabetical", "Acquisition of Signal"], 
+            ["Unsorted", "Alphabetical", "Acquisition of Signal", "Selected First"], 
             value="Unsorted", 
             on_change=sort_satellites
         ).classes('w-full mb-4')
@@ -177,29 +168,63 @@ def main_page():
                     btn.on_click(lambda e, k=key, b=btn: select_satellite(k, b))
 
 
-    
+    def update_countdown_times():
+        global user_loc
+        global satellite_labels
+        
+        try:
+            rise_times = riseset.nextRiseTimeDict(user_loc)
+        except Exception as e:
+            print(f"Error fetching rise times: {e}")
+            return 
+
+        for sat_name, label in satellite_labels.items():
+            try:
+                # Actual math is restored!
+                sat_utc_arrival_string = rise_times[sat_name]
+                time_left = get_countdown_string(sat_utc_arrival_string)
+                label.text = f"{time_left}"
+                
+            except Exception as e:
+                # Fails silently if a sat is missing data, keeping the loop alive
+                continue
+
     # User location marker
-    def submit_location():
+    async def submit_location(): 
         global user_marker
         global user_loc
         try:
-            lat = float(lat_input.value)
-            lon = float(lon_input.value)
-            user_loc = (lat, lon)
-            # Use the map to remove the layer, not the marker itself
-            if user_marker:
-                my_map.remove_layer(user_marker)
+            if (lat_input.value != '' and lon_input.value != ''):
+                lat = float(lat_input.value)
+                lon = float(lon_input.value)
+        
+                new_user_loc = (lat, lon)
+                if not (-90.0 <= lat <= 90.0):
+                    ui.notify('Latitude must be between -90 and 90!', color='negative')
+                    return # Stop the function here
+                    
+                if not (-180.0 <= lon <= 180.0):
+                    ui.notify('Longitude must be between -180 and 180!', color='negative')
+                    return # Stop the function here
+                    
+                if (new_user_loc == user_loc):
+                    # Give the UI a microsecond to breathe
+                    await asyncio.sleep(0.1) 
+                    
+                    update_countdown_times()
+                    return
+                user_loc = new_user_loc
+            
+                # THE FIX: No creation, only moving. 
+                user_marker.move(lat, lon)
 
-            # Add new marker
-            user_marker = my_map.marker(latlng=(lat, lon))
+                ui.notify(f'Location set to: ({lat}, {lon})')
+            
+            # Give the UI a microsecond to breathe
+            await asyncio.sleep(0.1) 
+            
+            update_countdown_times()
 
-            # Center map on user
-            #my_map.set_center((lat, lon))
-
-            ui.notify(f'Location set to: ({lat}, {lon})')
-            ui.timer(0.1, update_countdown_times, once=True)
-
-        # 3. Specifically catch ValueError so we don't accidentally hide other bugs
         except ValueError: 
             ui.notify('Invalid input! Please enter numbers.', color='negative')
 
@@ -224,14 +249,30 @@ def main_page():
     # Delete the default, infinite-wrapping map images
     my_map.clear_layers()
 
-    # Add the exact same map images back, but strictly forbid them from wrapping
+   # 1. Base Satellite Map
     my_map.tile_layer(
-        url_template='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        url_template='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         options={
             'noWrap': True,
-            'bounds': [[-90, -180], [90, 180]]
+            'bounds': [[-90, -180], [90, 180]],
+            'maxZoom': 19,
+            'attribution': 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
         }
     )
+
+    # 2. Transparent Labels & Borders Overlay
+    my_map.tile_layer(
+        url_template='https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+        options={
+            'noWrap': True,
+            'bounds': [[-90, -180], [90, 180]],
+            'maxZoom': 19
+        }
+    )
+    # stop issues with marker buggin
+    global user_marker
+    user_marker = my_map.marker(latlng=(0, 0))
+
 
     # setup nighttime
     async def setup_nighttime():
@@ -277,7 +318,7 @@ def main_page():
         #print(force_update)
         if (force_update == True):
             print("updating...")
-            for layer in list(my_map.layers)[1:]:
+            for layer in list(my_map.layers)[2:]:
                 if layer != user_marker:
                     my_map.remove_layer(layer)
             API.update_selected(list(selected_satellites))
@@ -290,7 +331,7 @@ def main_page():
         if (cycle_counter % 60 == 0):
             # update countdowns every minute
             # clear map except for actual map layer
-            for layer in list(my_map.layers)[1:]:
+            for layer in list(my_map.layers)[2:]:
                 if layer != user_marker:
                     my_map.remove_layer(layer)
             # update list of selected sats in API class
@@ -304,7 +345,7 @@ def main_page():
 
     # main loop of webpage
     ui.timer(1.0, update_cycle)
-    #ui.timer(60.0, update_countdown_times)
+    ui.timer(60.0, submit_location)
 
     
 
